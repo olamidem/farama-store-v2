@@ -1,9 +1,7 @@
+import LoginScreen from "./componenets/LoginScreen";
+
 const App = () => {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </div>
-  );
+  return <LoginScreen />;
 };
 
 export default App;
