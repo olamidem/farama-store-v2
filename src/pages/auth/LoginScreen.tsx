@@ -1,5 +1,5 @@
 import { Lock, LogIn, Phone } from "lucide-react";
-import bgImage from "../assets/this.png";
+import bgImage from "../../assets/this.png";
 
 const LoginScreen = () => {
   return (
@@ -69,7 +69,7 @@ const LoginScreen = () => {
                   defaultChecked
                   className="rounded border-slate-300 text-blue-600 focus:ring-blue-500/20"
                 />
-                <span>Remember this terminal</span>
+                <span>Remember me</span>
               </label>
             </div>
 
