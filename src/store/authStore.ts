@@ -16,12 +16,9 @@ export type AuthStore = AuthState & AuthActions;
 
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
-
   token: localStorage.getItem("ACCESS_TOKEN"),
-
   login: (user, token) => {
     localStorage.setItem("ACCESS_TOKEN", token);
-
     set({
       user,
       token,
@@ -30,7 +27,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   logout: () => {
     localStorage.removeItem("ACCESS_TOKEN");
-
     set({
       user: null,
       token: null,
