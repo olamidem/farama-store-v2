@@ -1,13 +1,27 @@
-import type { PropsWithChildren } from "react";
-import LoadingScreen from "../components/common/LoadingScreen";
+import type { ReactNode } from "react";
 import { useAuthStore } from "../store/authStore";
-import { useRestoreSession } from "./useRestoreSession";
+import { useCurrentUser } from "../features/auth/hooks/useCurrentUser";
+import LoadingScreen from "../components/common/LoadingScreen";
 
-export default function AppInitializer({ children }: PropsWithChildren) {
-  const token = useAuthStore((state) => state.token);
-  const { isPending } = useRestoreSession();
-  if (token && isPending) {
-    return <LoadingScreen />;
-  }
-  return <>{children}</>;
+interface AppInitializerProps {
+  children: ReactNode;
 }
+
+const AppInitializer = ({ children }: AppInitializerProps) => {
+  const token = useAuthStore((state) => state.token);
+  const { isLoading } = useCurrentUser();
+  // No token → nothing to restore
+  if (!token) {
+    return <>{children}</>;
+  }
+  // Token exists → restoring session
+  if (isLoading) {
+    return (
+      <LoadingScreen/>
+    );
+  }
+
+  return <>{children}</>;
+};
+
+export default AppInitializer;

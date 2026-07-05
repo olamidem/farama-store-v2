@@ -7,10 +7,9 @@ const ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   token: localStorage.getItem(ACCESS_TOKEN_KEY),
-  login: (user, token) => {
+  login: (token) => {
     localStorage.setItem(ACCESS_TOKEN_KEY, token);
     set({
-      user,
       token,
     });
   },

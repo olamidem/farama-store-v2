@@ -2,14 +2,14 @@ import type { User } from "../../../types/user";
 
 // Data sent when logging in
 export interface LoginRequest {
-  phone_number: string;
+  email: string;
   password: string;
 }
 
 // Data returned after a successful login
 export interface LoginResponse {
-  user: User;
-  token: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 // Authentication state
@@ -20,7 +20,7 @@ export interface AuthState {
 
 // Authentication actions
 export interface AuthActions {
-  login: (user: User, token: string) => void;
+  login: (token: string) => void;
   logout: () => void;
   setUser: (user: User) => void;
 }
