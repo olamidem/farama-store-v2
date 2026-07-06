@@ -1,30 +1,19 @@
-import type { User } from "../../../types/user";
+import type { Session, User } from "@supabase/supabase-js";
 
-// Data sent when logging in
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-// Data returned after a successful login
-export interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-}
-
-// Authentication state
 export interface AuthState {
   user: User | null;
-  token: string | null;
+  session: Session | null;
 }
 
-// Authentication actions
 export interface AuthActions {
-  setToken: (token: string) => void;
-  setUser: (user: User) => void;
+  setSession: (session: Session | null) => void;
+  setUser: (user: User | null) => void;
   logout: () => void;
 }
 
-
-// Complete auth store type
 export type AuthStore = AuthState & AuthActions;
