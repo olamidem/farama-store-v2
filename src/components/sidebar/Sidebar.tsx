@@ -1,5 +1,5 @@
-import Logo from "./Logo";
-import { navigation } from "./Navigation";
+import Logo from "../header/Logo";
+import { navigation } from "../layout/Navigation";
 import SidebarSection from "./SidebarSection";
 
 const Sidebar = () => {

@@ -1,5 +1,5 @@
 import SidebarItem from "./SidebarItem";
-import type { NavigationItem } from "./navigation.types";
+import type { NavigationItem } from "../layout/navigation.types";
 
 interface SidebarSectionProps {
   title: string;

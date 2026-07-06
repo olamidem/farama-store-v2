@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { NavigationItem } from "./navigation.types";
+import type { NavigationItem } from "../layout/navigation.types";
 
 const SidebarItem = ({ label, to, icon: Icon }: NavigationItem) => {
   return (
