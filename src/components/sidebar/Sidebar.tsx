@@ -1,6 +1,7 @@
-import Logo from "../header/Logo";
-import { navigation } from "../layout/Navigation";
-import SidebarSection from "./SidebarSection";
+import Logo from "../branding/Logo";
+import { navigation } from "./Navigation";
+import SidebarSection from "./SidebarSection";  
+
 
 const Sidebar = () => {
   return (
