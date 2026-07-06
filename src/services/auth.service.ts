@@ -1,6 +1,6 @@
 import { supabase } from "../api/supabase";
+import type { User } from "@supabase/supabase-js";
 import type { LoginRequest } from "../features/auth/types/auth";
-import type { User } from "../types/user";
 
 export const login = async ({ email, password }: LoginRequest) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -15,6 +15,7 @@ export const login = async ({ email, password }: LoginRequest) => {
 
 export const logout = async (): Promise<void> => {
   const { error } = await supabase.auth.signOut();
+
   if (error) {
     throw new Error(error.message);
   }
@@ -28,5 +29,5 @@ export const getCurrentUser = async (): Promise<User | null> => {
   if (error) {
     throw new Error(error.message);
   }
-  return user as User | null;
+  return user;
 };
