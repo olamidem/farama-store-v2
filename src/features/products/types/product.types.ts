@@ -9,4 +9,5 @@ export interface Product {
   minStockAlert: number;
   createdAt: string;
   updatedAt: string;
+  // category?: Category;
 }
