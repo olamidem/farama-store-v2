@@ -4,10 +4,10 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import LoginScreen from "../pages/LoginScreen";
 import { requireAuth } from "./guard";
 import DashboardLayout from "../layout/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import LoginScreen from "../pages/Login/LoginScreen";
 
 const rootRoute = createRootRoute();
 const loginRoute = createRoute({

@@ -1,5 +1,6 @@
-import LoginForm from "../features/auth/components/LoginForm";
-import bgImage from "./../assets/this.png";
+
+import LoginForm from "../../features/auth/components/LoginForm";
+import bgImage from "./../../assets/this.png";
 import { AnimatePresence, motion } from "motion/react";
 
 const LoginScreen = () => {
