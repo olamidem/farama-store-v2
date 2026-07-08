@@ -37,7 +37,8 @@ const ProductForm = ({
   const {
     register,
     handleSubmit,
-    control,
+      control,
+    reset,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(createProductSchema),
@@ -61,7 +62,8 @@ const ProductForm = ({
           barcode: data.barcode?.trim() || "",
         };
 
-        onSubmit(payload);
+          onSubmit(payload);
+          reset()
       })}
       className="space-y-5"
     >
