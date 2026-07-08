@@ -1,25 +1,19 @@
-import {
-  forwardRef,
-  type InputHTMLAttributes,
-} from "react";
-
+import type { LabelHTMLAttributes } from "react";
 import { cn } from "../../utils/cn";
 
-const Input = forwardRef<
-  HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement>
->(({ className, ...props }, ref) => {
+const Label = ({
+  className,
+  children,
+  ...props
+}: LabelHTMLAttributes<HTMLLabelElement>) => {
   return (
-    <input
-      ref={ref}
-      className={cn(
-        "w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
-        className
-      )}
+    <label
+      className={cn("mb-2 block text-sm font-medium text-gray-700", className)}
       {...props}
-    />
+    >
+      {children}
+    </label>
   );
-});
-Input.displayName = "Input";
+};
 
-export default Input;
+export default Label;

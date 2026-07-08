@@ -12,9 +12,9 @@ const Modal = ({ open, title, children, onClose }: ModalProps) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div
-        className="bg-white rounded-xl shadow-xl max-w-sm w-full overflow-hidden my-8"
+        className="bg-white rounded-xl shadow-xl max-w-2xl w-full overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
