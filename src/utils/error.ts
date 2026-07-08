@@ -9,7 +9,10 @@ export function getReadableError(error: unknown): string {
     }
     if (message.includes("duplicate")) {
       return "This record already exists.";
-    }
+      }
+        if (message.includes("network")) {
+          return "Unable to connect. Check your internet connection.";
+        }
     return message;
   }
   return "Something went wrong. Please try again.";

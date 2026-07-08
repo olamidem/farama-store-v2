@@ -16,6 +16,7 @@ export default function App() {
         richColors
           closeButton
           expand={false}
+          duration={3000}
       />
       </AppInitializer>
     </QueryClientProvider>
