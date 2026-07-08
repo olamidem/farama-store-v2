@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { useProducts } from "../features/products/hooks/useProducts";
 import ProductTable from "../features/products/components/ProductTable";
 import LoadingScreen from "../components/common/LoadingScreen";
+import AddProductModal from "../features/products/components/AddProductModal";
 
 const ProductsPage = () => {
   const [open, setOpen] = useState(false);
@@ -12,7 +13,6 @@ const ProductsPage = () => {
   const [category, setCategory] = useState("");
 
   const { data: products = [], isLoading, error } = useProducts();
-
   if (isLoading) {
     return <LoadingScreen text="Loading products..." />;
   }
@@ -43,7 +43,12 @@ const ProductsPage = () => {
         />
         {/* Table */}
         <ProductTable products={products} />
+
         {/* Modal */}
+        <AddProductModal
+          open={open}
+          onClose={() => setOpen(false)}
+        />
       </div>
     </motion.div>
   );
