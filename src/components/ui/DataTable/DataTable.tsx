@@ -3,45 +3,60 @@ import {
   getCoreRowModel,
   useReactTable,
   type ColumnDef,
+  type OnChangeFn,
+  type RowSelectionState,
 } from "@tanstack/react-table";
-import DataTableEmpty from "./DataTableEmpty";
 import { Package } from "lucide-react";
+import DataTableEmpty from "./DataTableEmpty";
 
 interface DataTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
+  enableRowSelection?: boolean;
+  rowSelection?: RowSelectionState;
+ onRowSelectionChange?: OnChangeFn<RowSelectionState>;
 }
 
-const DataTable = <T,>({ data, columns }: DataTableProps<T>) => {
+const DataTable = <T,>({
+  data,
+  columns,
+  enableRowSelection = false,
+  rowSelection = {},
+  onRowSelectionChange,
+}: DataTableProps<T>) => {
   if (data.length === 0) {
     return (
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <DataTableEmpty
-          icon={Package}
-          title="No Products"
-          description="Create your first product to get started."
-        />
-      </div>
+      <DataTableEmpty
+        icon={Package}
+        title="No data found"
+        description="There is nothing to display."
+      />
     );
   }
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      rowSelection,
+    },
+    enableRowSelection,
+    onRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
-        <table className="min-w-full">
+        <table className="min-w-full table-auto">
           {/* Header */}
-          <thead className="sticky top-0 bg-slate-50">
+          <thead className="bg-slate-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="border-b border-slate-200 px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
+                    className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
                   >
                     {header.isPlaceholder
                       ? null

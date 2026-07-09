@@ -1,3 +1,4 @@
+import type { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
 import DataTable from "../../../components/ui/DataTable/DataTable";
 import DataTableSkeleton from "../../../components/ui/DataTable/DataTableSkeleton";
 import type { Category } from "../../categories/types/category";
@@ -8,12 +9,18 @@ interface ProductTableProps {
   products: Product[];
   categories: Category[];
   isLoading?: boolean;
+  enableRowSelection?: boolean;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
 }
 
 const ProductTable = ({
   products,
   categories,
   isLoading = false,
+  enableRowSelection,
+  rowSelection,
+  onRowSelectionChange,
 }: ProductTableProps) => {
   if (isLoading) {
     return <DataTableSkeleton rows={8} columns={7} />;
@@ -21,7 +28,15 @@ const ProductTable = ({
 
   const columns = productColumns(categories);
 
-  return <DataTable data={products} columns={columns} />;
+  return (
+    <DataTable
+      data={products}
+      columns={columns}
+      enableRowSelection={enableRowSelection}
+      rowSelection={rowSelection}
+      onRowSelectionChange={onRowSelectionChange}
+    />
+  );
 };
 
 export default ProductTable;

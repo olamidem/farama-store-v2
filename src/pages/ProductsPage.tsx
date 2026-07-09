@@ -7,11 +7,13 @@ import AddProductModal from "../features/products/components/AddProductModal";
 import { useProducts } from "../features/products/hooks/useProducts";
 import { useCategories } from "../features/categories/hooks/useCategories";
 import ErrorState from "../components/common/ErrorState";
+import type { RowSelectionState } from "@tanstack/react-table";
 
 const ProductsPage = () => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: products = [], isLoading, error } = useProducts();
   const { data: categories = [] } = useCategories();
 
