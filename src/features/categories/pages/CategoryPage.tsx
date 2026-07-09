@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 import Button from "../../../components/ui/Button";
-import PageHeader from "../../../components/ui/PageHeader";
 
 import CategoryGrid from "../components/CategoryGrid";
 import AddCategoryModal from "../components/AddCategoryModal";
 
 import { useCategories } from "../hooks/useCategories";
 import { useProducts } from "../../product/hooks/useProducts";
+import PageHeader from "../../../components/ui/PageHeader";
 
 const CategoryPage = () => {
   const [open, setOpen] = useState(false);
