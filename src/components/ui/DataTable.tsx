@@ -20,7 +20,7 @@ const DataTable = <T,>({ data, columns }: DataTableProps<T>) => {
   return (
     <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-xs">
       <div className="overflow-x-auto">
-        <table className="min-w-full w-full text-left text-xs border-collapse">
+        <table className="w-full text-left text-xs border-collapse">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr

@@ -67,6 +67,8 @@ const ProductForm = ({
           barcode: data.barcode?.trim() || "",
         };
         onSubmit(payload);
+        console.log(payload);
+
         reset();
       })}
       className="space-y-5"
@@ -145,7 +147,7 @@ const ProductForm = ({
           </Label>
           <Input
             type="number"
-            {...(register("stock"), { valueAsNumber: true })}
+            {...register("stock", { valueAsNumber: true })}
             placeholder="0"
             className="w-full py-2 px-3 border border-slate-200 rounded-lg focus:outline-none font-mono"
           />
