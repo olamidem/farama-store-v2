@@ -5,9 +5,7 @@ import Button from "../../../components/ui/Button";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
 
-export const productColumns = (
-  categories: Category[],
-): ColumnDef<Product>[] => [
+export const productColumns = (categories: Category[]): ColumnDef<Product>[] => [
   {
     accessorKey: "barcode",
     header: "Barcode",
@@ -55,7 +53,7 @@ export const productColumns = (
     header: "Selling Price",
     cell: ({ row }) => (
       <span className="font-bold text-slate-900">
-        € {row.original.selling_price.toFixed(2)}
+        ₦ {row.original.selling_price.toFixed(2)}
       </span>
     ),
   },
@@ -64,7 +62,7 @@ export const productColumns = (
     header: "Cost Price",
     cell: ({ row }) => (
       <span className="text-slate-500">
-        € {row.original.cost_price.toFixed(2)}
+        ₦ {row.original.cost_price.toFixed(2)}
       </span>
     ),
   },
@@ -90,7 +88,7 @@ export const productColumns = (
     header: "Actions",
     cell: () => (
       <Button size="sm" variant="secondary">
-        <Pencil size={14} />
+        <Pencil size={12} />
         Edit
       </Button>
     ),
