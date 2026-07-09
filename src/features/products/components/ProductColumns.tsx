@@ -21,18 +21,13 @@ export const productColumns = (
     },
     {
       accessorKey: "name",
-
       header: "Product Name",
-
       cell: ({ row }) => {
         const product = row.original;
-
         const isLowStock = product.stock <= product.min_stock_alert;
-
         return (
           <div className="flex items-center justify-between gap-3">
             <span className="font-semibold text-slate-800">{product.name}</span>
-
             {isLowStock && <Badge variant="danger">Low Stock</Badge>}
           </div>
         );
