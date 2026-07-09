@@ -1,6 +1,6 @@
-
-import ProductCategoryFilter from "./ProductFilter";
-import ProductSearch from "./ProductSearch";
+import DataTableToolbar from "../../../components/ui/DataTable/DataTableToolbar";
+import Input from "../../../components/ui/Input";
+import Select from "../../../components/ui/Select";
 
 interface ProductToolbarProps {
   search: string;
@@ -16,15 +16,27 @@ const ProductToolbar = ({
   onCategoryChange,
 }: ProductToolbarProps) => {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex-1">
-          <ProductSearch value={search} onChange={onSearchChange} />
-        </div>
-
-        <ProductCategoryFilter value={category} onChange={onCategoryChange} />
-      </div>
-    </div>
+    <DataTableToolbar
+      left={
+        <Input
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
+      }
+      right={
+        <Select
+          value={category}
+          onChange={(e) => onCategoryChange(e.target.value)}
+          options={[
+            {
+              label: "All Categories",
+              value: "",
+            },
+          ]}
+        />
+      }
+    />
   );
 };
 

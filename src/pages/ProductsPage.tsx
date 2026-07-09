@@ -36,7 +36,6 @@ const ProductsPage = () => {
         onAddProduct={() => setOpen(true)}
         onDownload={() => console.log("Download")}
       />
-
       {/* Toolbar */}
       <ProductToolbar
         search={search}
