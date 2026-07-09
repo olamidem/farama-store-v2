@@ -2,9 +2,13 @@ import type { ReactNode } from "react";
 import { cn } from "../../utils/cn";
 
 type BadgeVariant = "default" | "success" | "warning" | "danger" | "info";
+
+type BadgeSize = "sm" | "md";
+
 interface BadgeProps {
   children: ReactNode;
   variant?: BadgeVariant;
+  size?: BadgeSize;
   className?: string;
 }
 
@@ -16,12 +20,23 @@ const variants = {
   info: "bg-blue-100 text-blue-700",
 };
 
-const Badge = ({ children, variant = "default", className }: BadgeProps) => {
+const sizes = {
+  sm: "px-2 py-0.5 text-[11px]",
+  md: "px-2.5 py-1 text-xs",
+};
+
+const Badge = ({
+  children,
+  variant = "default",
+  size = "md",
+  className,
+}: BadgeProps) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center rounded-full font-semibold",
         variants[variant],
+        sizes[size],
         className,
       )}
     >
