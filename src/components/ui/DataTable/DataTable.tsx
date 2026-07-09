@@ -4,6 +4,8 @@ import {
   useReactTable,
   type ColumnDef,
 } from "@tanstack/react-table";
+import DataTableEmpty from "./DataTableEmpty";
+import { Package } from "lucide-react";
 
 interface DataTableProps<T> {
   data: T[];
@@ -11,6 +13,17 @@ interface DataTableProps<T> {
 }
 
 const DataTable = <T,>({ data, columns }: DataTableProps<T>) => {
+  if (data.length === 0) {
+    return (
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <DataTableEmpty
+          icon={Package}
+          title="No Products"
+          description="Create your first product to get started."
+        />
+      </div>
+    );
+  }
   const table = useReactTable({
     data,
     columns,

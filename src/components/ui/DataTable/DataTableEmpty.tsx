@@ -1,21 +1,25 @@
+import type { LucideIcon } from "lucide-react";
+import { Database } from "lucide-react";
+
 interface DataTableEmptyProps {
-  colSpan: number;
-  message?: string;
+  icon?: LucideIcon;
+  title?: string;
+  description?: string;
 }
 
 const DataTableEmpty = ({
-  colSpan,
-  message = "No records found.",
+  icon: Icon = Database,
+  title = "No records found",
+  description = "There is nothing to display yet.",
 }: DataTableEmptyProps) => {
   return (
-    <tr>
-      <td
-        colSpan={colSpan}
-        className="py-16 text-center text-sm text-slate-400"
-      >
-        {message}
-      </td>
-    </tr>
+    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+        <Icon className="h-8 w-8 text-slate-400" />
+      </div>
+      <h3 className="mt-5 text-lg font-semibold text-slate-800">{title}</h3>
+      <p className="mt-2 max-w-sm text-sm text-slate-500">{description}</p>
+    </div>
   );
 };
 
