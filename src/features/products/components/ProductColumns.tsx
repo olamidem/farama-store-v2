@@ -4,6 +4,7 @@ import Badge from "../../../components/ui/Badge";
 import Button from "../../../components/ui/Button";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
+import { formatCurrency } from "../../../utils/format";
 
 export const productColumns = (categories: Category[]): ColumnDef<Product>[] => [
   {
@@ -53,7 +54,7 @@ export const productColumns = (categories: Category[]): ColumnDef<Product>[] => 
     header: "Selling Price",
     cell: ({ row }) => (
       <span className="font-bold text-slate-900">
-        ₦ {row.original.selling_price.toFixed(2)}
+        {formatCurrency(row.original.selling_price)}
       </span>
     ),
   },
@@ -62,7 +63,7 @@ export const productColumns = (categories: Category[]): ColumnDef<Product>[] => 
     header: "Cost Price",
     cell: ({ row }) => (
       <span className="text-slate-500">
-        ₦ {row.original.cost_price.toFixed(2)}
+        {formatCurrency(row.original.cost_price)}
       </span>
     ),
   },
