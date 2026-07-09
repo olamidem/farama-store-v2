@@ -51,6 +51,9 @@ const ProductsPage = () => {
         products={products}
         categories={categories}
         isLoading={isLoading}
+        enableRowSelection
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
       />
 
       {/* Modal */}
