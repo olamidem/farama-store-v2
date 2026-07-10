@@ -47,7 +47,11 @@ export const productColumns = (
         (c) => c.id === row.original.category_id,
       );
       return (
-        <Badge variant="info" size="sm" className="text-slate-800">
+        <Badge
+          variant="info"
+          size="sm"
+          className="text-slate-800 rounded text-[11px]"
+        >
           {category?.name ?? "Uncategorized"}
         </Badge>
       );
@@ -57,7 +61,7 @@ export const productColumns = (
     accessorKey: "selling_price",
     header: "Selling Price",
     cell: ({ row }) => (
-      <span className="font-semibold text-slate-900">
+      <span className="font-bold text-slate-900">
         {formatCurrency(row.original.selling_price)}
       </span>
     ),
@@ -93,11 +97,12 @@ export const productColumns = (
     header: "Actions",
     cell: ({ row }) => (
       <Button
+        className="text-slate-700 rounded text-[11px]"
         size="sm"
         variant="secondary"
         onClick={() => onEdit(row.original)}
       >
-        <Pencil size={12} />
+        <Pencil size={10} />
         Edit
       </Button>
     ),
