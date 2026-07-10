@@ -5,6 +5,7 @@ import BulkUpdateForm from "./BulkUpdateForm";
 import BulkUpdatePreview from "./BulkUpdatePreview";
 import BulkUpdateActions from "./BulkUpdateActions";
 import { useBulkPricePreview } from "../hooks/useBulkPricePreview";
+import { useBulkUpdateProducts } from "../hooks/useProducts";
 
 const BulkUpdateModal = ({
   open,
@@ -32,15 +33,22 @@ const BulkUpdateModal = ({
     operation,
   });
 
-  const handleApply = () => {
-    console.log({
-      updateType,
-      method,
-      operation,
-      amount,
-      selectedProducts,
-    });
-      setAmount("")
+  const bulkUpdateMutation = useBulkUpdateProducts();
+
+  const handleApply = async () => {
+    const updates = previewProducts.map((product) => ({
+      id: product.id,
+      updates: {
+        ...(updateType !== "cost" && {
+          selling_price: product.newSellingPrice,
+        }),
+        ...(updateType !== "selling" && {
+          cost_price: product.newCostPrice,
+        }),
+      },
+    }));
+    await bulkUpdateMutation.mutateAsync(updates);
+    setAmount("");
     onClose();
   };
 
