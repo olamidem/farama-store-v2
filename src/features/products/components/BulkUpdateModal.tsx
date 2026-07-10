@@ -14,16 +14,16 @@ const BulkUpdateModal = ({
   selectedProducts,
 }: BulkUpdateModalProps) => {
   return (
-    <Modal open={open} onClose={onClose} title="Bulk Update Prices">
-      <div className="space-y-6">
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Bulk Update Prices (${selectedProducts.length || 0} ${selectedProducts.length === 1 ? "item" : "items"})`}
+    >
+      <div className="space-y-1">
         {/* Description */}
         <div>
-          <p className="text-sm text-slate-500">
-            Update prices for{" "}
-            <span className="font-semibold text-slate-700">
-              {selectedProducts.length}
-            </span>{" "}
-            selected products.
+          <p className="block text-[12px] font-bold text-slate-400 uppercase">
+            Apply Update To
           </p>
         </div>
 
@@ -39,6 +39,7 @@ const BulkUpdateModal = ({
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
+
           <Button>Apply Update</Button>
         </div>
       </div>
