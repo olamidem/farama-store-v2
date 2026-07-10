@@ -132,7 +132,6 @@ const BulkUpdateForm = ({
               onClick={() => onOperationChange("decrease")}
               className={cn(
                 "flex-1 py-2 text-[10px] font-bold transition-colors",
-
                 operation === "decrease"
                   ? "bg-red-600 text-white"
                   : "bg-white text-slate-600 hover:bg-slate-50",
