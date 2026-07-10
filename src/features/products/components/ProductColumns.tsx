@@ -31,7 +31,11 @@ export const productColumns = (
         <div className="flex items-center justify-between gap-3">
           <span className="font-semibold text-slate-900">{product.name}</span>
           {isLowStock && (
-            <Badge variant="danger" size="sm">
+            <Badge
+              variant="danger"
+              size="sm"
+              className="inline-block mt-0.5 px-1.5 py-0.2 bg-rose-100 text-rose-700 font-bold rounded-sm text-[8px] uppercase tracking-wider"
+            >
               Low Stock
             </Badge>
           )}
