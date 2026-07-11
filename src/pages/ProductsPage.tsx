@@ -13,6 +13,7 @@ import BulkUpdateModal from "../features/products/components/BulkUpdateModal";
 import type { Product } from "../features/products/types/product";
 import EditProductModal from "../features/products/components/EditProductModal";
 import DeleteProductModal from "../features/products/components/DeleteProductModal";
+import RestoreProductModal from "../features/products/components/RestoreProductModal";
 
 const ProductsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -27,6 +28,9 @@ const ProductsPage = () => {
   const { data: categories = [] } = useCategories();
   const [productToDeactivate, setProductToDeactivate] =
     useState<Product | null>(null);
+  const [productToRestore, setProductToRestore] = useState<Product | null>(
+    null,
+  );
 
   const selectedProducts = useMemo(() => {
     return products.filter((product) => rowSelection[String(product.id)]);
@@ -64,9 +68,9 @@ const ProductsPage = () => {
     setProductToDeactivate(product);
   };
 
-  const handleRestoreProduct = (product: Product) => {
-    console.log("Restore product:", product);
-  };
+ const handleRestoreProduct = (product: Product) => {
+   setProductToRestore(product);
+ };
 
   if (error) {
     return (
@@ -150,6 +154,12 @@ const ProductsPage = () => {
         open={!!productToDeactivate}
         product={productToDeactivate}
         onClose={() => setProductToDeactivate(null)}
+      />
+
+      <RestoreProductModal
+        open={!!productToRestore}
+        product={productToRestore}
+        onClose={() => setProductToRestore(null)}
       />
     </motion.div>
   );
