@@ -64,6 +64,10 @@ const ProductsPage = () => {
     setProductToDeactivate(product);
   };
 
+  const handleRestoreProduct = (product: Product) => {
+    console.log("Restore product:", product);
+  };
+
   if (error) {
     return (
       <ErrorState
@@ -118,6 +122,7 @@ const ProductsPage = () => {
         onRowSelectionChange={setRowSelection}
         onEdit={handleEditProduct}
         onDeactivate={handleDeactivateProduct}
+        onRestore={handleRestoreProduct}
       />
 
       {/* Modal */}

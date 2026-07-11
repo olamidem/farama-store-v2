@@ -1,5 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { Pencil, Trash2 } from "lucide-react";
 import Badge from "../../../components/ui/Badge";
 import Button from "../../../components/ui/Button";
 import type { Category } from "../../categories/types/category";
@@ -12,12 +11,14 @@ interface ProductColumnsProps {
   categories: Category[];
   onEdit: (product: Product) => void;
   onDeactivate: (product: Product) => void;
+  onRestore: (product: Product) => void;
 }
 
 export const productColumns = ({
   categories,
   onEdit,
   onDeactivate,
+  onRestore,
 }: ProductColumnsProps): ColumnDef<Product>[] => [
   selectionColumn<Product>(),
   {
@@ -119,27 +120,32 @@ export const productColumns = ({
     cell: ({ row }) => {
       const product = row.original;
 
-      return (
-        <div className="flex gap-2">
-          <Button
-            className="text-slate-700 text-[11px]"
-            size="sm"
-            variant="secondary"
-            onClick={() => onEdit(product)}
-          >
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Button>
+      if (product.is_active) {
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => onEdit(product)}
+            >
+              Edit
+            </Button>
 
-          <Button
-            size="sm"
-            variant="danger"
-            onClick={() => onDeactivate(product)}
-          >
-            <Trash2 className="h-4 w-4" />
-            Deactivate
-          </Button>
-        </div>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => onDeactivate(product)}
+            >
+              Deactivate
+            </Button>
+          </div>
+        );
+      }
+
+      return (
+        <Button size="sm" variant="primary" onClick={() => onRestore(product)}>
+          Restore
+        </Button>
       );
     },
   },
