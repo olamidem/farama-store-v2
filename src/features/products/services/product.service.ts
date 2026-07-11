@@ -26,7 +26,7 @@ export const getProducts = async (): Promise<Product[]> => {
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .eq("is_active", true)
+    // .eq("is_active", true)
     .order("created_at", { ascending: false });
   if (error) {
     throw new Error(error.message);
@@ -93,6 +93,18 @@ export const deactivateProduct = async (id: string): Promise<void> => {
   }
 };
 
+export const restoreProduct = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from("products")
+    .update({
+      is_active: true,
+    })
+    .eq("id", id);
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const deleteProduct = async (
   id: string
 ): Promise<void> => {
@@ -104,3 +116,4 @@ export const deleteProduct = async (
     throw new Error(error.message);
   }
 };
+

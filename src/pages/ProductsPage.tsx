@@ -13,6 +13,7 @@ import BulkUpdateModal from "../features/products/components/BulkUpdateModal";
 import type { Product } from "../features/products/types/product";
 import EditProductModal from "../features/products/components/EditProductModal";
 import DeleteProductModal from "../features/products/components/DeleteProductModal";
+import RestoreProductModal from "../features/products/components/RestoreProductModal";
 
 const ProductsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -22,14 +23,36 @@ const ProductsPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [status, setStatus] = useState("all");
   const { data: products = [], isLoading, error } = useProducts();
   const { data: categories = [] } = useCategories();
   const [productToDeactivate, setProductToDeactivate] =
     useState<Product | null>(null);
+  const [productToRestore, setProductToRestore] = useState<Product | null>(
+    null,
+  );
 
   const selectedProducts = useMemo(() => {
     return products.filter((product) => rowSelection[String(product.id)]);
   }, [products, rowSelection]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        (product.barcode ?? "").toLowerCase().includes(search.toLowerCase());
+
+      const matchesCategory =
+        category === "" || product.category_id === category;
+
+      const matchesStatus =
+        status === "all" ||
+        (status === "active" && product.is_active) ||
+        (status === "inactive" && !product.is_active);
+
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [products, search, category, status]);
 
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -44,6 +67,10 @@ const ProductsPage = () => {
   const handleDeactivateProduct = (product: Product) => {
     setProductToDeactivate(product);
   };
+
+ const handleRestoreProduct = (product: Product) => {
+   setProductToRestore(product);
+ };
 
   if (error) {
     return (
@@ -72,6 +99,9 @@ const ProductsPage = () => {
         category={category}
         onSearchChange={setSearch}
         onCategoryChange={setCategory}
+        status={status}
+        onStatusChange={setStatus}
+        categories={categories}
       />
 
       {/* Bulk Selection for Update */}
@@ -86,8 +116,9 @@ const ProductsPage = () => {
       </AnimatePresence>
 
       {/* Table */}
+
       <ProductTable
-        products={products}
+        products={filteredProducts}
         categories={categories}
         isLoading={isLoading}
         enableRowSelection
@@ -95,6 +126,7 @@ const ProductsPage = () => {
         onRowSelectionChange={setRowSelection}
         onEdit={handleEditProduct}
         onDeactivate={handleDeactivateProduct}
+        onRestore={handleRestoreProduct}
       />
 
       {/* Modal */}
@@ -122,6 +154,12 @@ const ProductsPage = () => {
         open={!!productToDeactivate}
         product={productToDeactivate}
         onClose={() => setProductToDeactivate(null)}
+      />
+
+      <RestoreProductModal
+        open={!!productToRestore}
+        product={productToRestore}
+        onClose={() => setProductToRestore(null)}
       />
     </motion.div>
   );

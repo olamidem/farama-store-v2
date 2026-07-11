@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getProduct,
   getProducts,
+  restoreProduct,
   updateProduct,
 } from "../services/product.service";
 import type { CreateProductInput, UpdateProductInput } from "../types/product";
@@ -79,6 +80,23 @@ export const useBulkUpdateProducts = () => {
   });
 };
 
+export const useRestoreProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: restoreProduct,
+    onSuccess: () => {
+      toast.success("Product restored successfully.");
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -93,7 +111,6 @@ export const useDeleteProduct = () => {
 
 export const useDeactivateProduct = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: deactivateProduct,
     onSuccess: () => {

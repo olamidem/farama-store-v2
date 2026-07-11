@@ -3,25 +3,25 @@ import Modal from "../../../components/ui/Modal";
 import Button from "../../../components/ui/Button";
 import ConfirmDialog from "../../../components/ui/ConfirmDialog";
 import { useCategories } from "../../categories/hooks/useCategories";
-import { useDeactivateProduct } from "../hooks/useProducts";
+import { useRestoreProduct } from "../hooks/useProducts";
 import type { Product } from "../types/product";
-import ProductDeleteSummary from "./ProductDeleteSummary";
-import { AlertTriangle } from "lucide-react";
+import {  RefreshCw } from "lucide-react";
+import ProductRestoreSummary from "./ProductRestoreSummary";
 
-interface DeleteProductModalProps {
+interface RestoreProductModalProps {
   open: boolean;
   product: Product | null;
   onClose: () => void;
 }
 
-const DeleteProductModal = ({
+const RestoreProductModal = ({
   open,
   product,
   onClose,
-}: DeleteProductModalProps) => {
+}: RestoreProductModalProps) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { data: categories = [] } = useCategories();
-  const deactivateProduct = useDeactivateProduct();
+  const restoreProduct = useRestoreProduct();
 
   if (!product) return null;
 
@@ -31,7 +31,7 @@ const DeleteProductModal = ({
 
   const handleDeactivate = async () => {
     try {
-      await deactivateProduct.mutateAsync(product.id);
+      await restoreProduct.mutateAsync(product.id);
       setShowConfirmDialog(false);
       onClose();
     } catch {
@@ -53,15 +53,15 @@ const DeleteProductModal = ({
         title={
           <>
             <div className="flex items-start gap-4 ">
-              <span className="p-2 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5" />
+              <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                <RefreshCw className="w-5 h-5" />
               </span>
               <div className="flex flex-col gap-0.5">
                 <h3 className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
-                  Delete Product Catalog Entry
+                  Restore Product Catalog Entry
                 </h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                  Step 1 of 2: Safety Catalog Review
+                  Step 1 of 2: Restore Product Review
                 </p>
               </div>
             </div>
@@ -69,15 +69,15 @@ const DeleteProductModal = ({
         }
       >
         <div className="space-y-6">
-          <ProductDeleteSummary product={product} categories={categories} />
+          <ProductRestoreSummary product={product} categories={categories} />
 
           <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
 
-            <Button variant="danger" onClick={handleInitiate}>
-              Initiate Deactivation
+            <Button variant="success" onClick={handleInitiate}>
+              Initiate Restoration
             </Button>
           </div>
         </div>
@@ -85,14 +85,15 @@ const DeleteProductModal = ({
 
       <ConfirmDialog
         open={showConfirmDialog}
-        title="Critical Confirmation"
-        subtitle="This action cannot be undone."
-        infoBoxText="Deleting this product will remove its barcode records, packaging configurations, and stock levels. Future sales reports of historic sales will still reference this item but you won't be able to restock it or select it for new sales."
-        description={`Are you sure you want to deactivate "${product.name}"? This product will be removed from active inventory but can be restored later.`}
-        confirmationKeyword="DEACTIVATE"
-        confirmText="Deactivate Product"
+        variant="success"
+        title="Restoration Confirmation"
+        subtitle="This will reactivate the item across all sales channels."
+        infoBoxText="Restoring this product will reconnect its barcode records, restore its historical packaging configurations, and put its stock levels back into active tracking. It will immediately become available again for restocking and selectable for new sales orders."
+        description={`Are you sure you want to restore this product "${product.name}"? The product will become active again and will be available for sales and inventory operations.`}
+        confirmationKeyword="RESTORE"
+        confirmText="Restore Product"
         cancelText="Cancel"
-        loading={deactivateProduct.isPending}
+        loading={restoreProduct.isPending}
         onCancel={() => setShowConfirmDialog(false)}
         onConfirm={handleDeactivate}
       />
@@ -100,4 +101,4 @@ const DeleteProductModal = ({
   );
 };
 
-export default DeleteProductModal;
+export default RestoreProductModal;
