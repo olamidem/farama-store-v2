@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Badge from "../../../components/ui/Badge";
 import Button from "../../../components/ui/Button";
 import type { Category } from "../../categories/types/category";
@@ -7,10 +7,18 @@ import type { Product } from "../types/product";
 import { formatCurrency } from "../../../utils/format";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
 
-export const productColumns = (
-  categories: Category[],
-  onEdit: (product: Product) => void,
-): ColumnDef<Product>[] => [
+
+interface ProductColumnsProps {
+  categories: Category[];
+  onEdit: (product: Product) => void;
+  onDeactivate: (product: Product) => void;
+}
+
+export const productColumns = ({
+  categories,
+  onEdit,
+  onDeactivate,
+}: ProductColumnsProps): ColumnDef<Product>[] => [
   selectionColumn<Product>(),
   {
     accessorKey: "barcode",
@@ -99,16 +107,31 @@ export const productColumns = (
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <Button
-        className="text-slate-700 rounded text-[11px]"
-        size="sm"
-        variant="secondary"
-        onClick={() => onEdit(row.original)}
-      >
-        <Pencil size={10} />
-        Edit
-      </Button>
-    ),
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return (
+        <div className="flex gap-2">
+          <Button
+            className="text-slate-700 text-[11px]"
+            size="sm"
+            variant="secondary"
+            onClick={() => onEdit(product)}
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Button>
+
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={() => onDeactivate(product)}
+          >
+            <Trash2 className="h-4 w-4" />
+            Deactivate
+          </Button>
+        </div>
+      );
+    },
   },
 ];

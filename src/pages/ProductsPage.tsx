@@ -12,6 +12,7 @@ import ProductBulkActions from "../features/products/components/ProductBulkActio
 import BulkUpdateModal from "../features/products/components/BulkUpdateModal";
 import type { Product } from "../features/products/types/product";
 import EditProductModal from "../features/products/components/EditProductModal";
+import DeleteProductModal from "../features/products/components/DeleteProductModal";
 
 const ProductsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -23,6 +24,8 @@ const ProductsPage = () => {
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const { data: products = [], isLoading, error } = useProducts();
   const { data: categories = [] } = useCategories();
+  const [productToDeactivate, setProductToDeactivate] =
+    useState<Product | null>(null);
 
   const selectedProducts = useMemo(() => {
     return products.filter((product) => rowSelection[String(product.id)]);
@@ -36,6 +39,10 @@ const ProductsPage = () => {
   const handleCloseEditModal = () => {
     setSelectedProduct(null);
     setIsEditModalOpen(false);
+  };
+
+  const handleDeactivateProduct = (product: Product) => {
+    setProductToDeactivate(product);
   };
 
   if (error) {
@@ -87,6 +94,7 @@ const ProductsPage = () => {
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         onEdit={handleEditProduct}
+        onDeactivate={handleDeactivateProduct}
       />
 
       {/* Modal */}
@@ -108,6 +116,12 @@ const ProductsPage = () => {
         open={isEditModalOpen}
         onClose={handleCloseEditModal}
         product={selectedProduct}
+      />
+
+      <DeleteProductModal
+        open={!!productToDeactivate}
+        product={productToDeactivate}
+        onClose={() => setProductToDeactivate(null)}
       />
     </motion.div>
   );

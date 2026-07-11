@@ -83,7 +83,7 @@ const BulkUpdateModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      size="md"
+      size="sm"
       title={`Bulk Update Prices (${selectedProducts.length} ${
         selectedProducts.length === 1 ? "Item" : "Items"
       })`}

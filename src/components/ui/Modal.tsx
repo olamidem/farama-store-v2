@@ -4,7 +4,7 @@ import { cn } from "../../utils/cn";
 
 interface ModalProps {
   open: boolean;
-  title: string;
+  title: string | ReactNode;
   children: ReactNode;
   onClose: () => void;
   size?: "sm" | "md" | "lg" | "xl";

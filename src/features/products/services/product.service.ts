@@ -81,6 +81,18 @@ export const bulkUpdateProducts = async (
   }
 };
 
+export const deactivateProduct = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from("products")
+    .update({
+      is_active: false,
+    })
+    .eq("id", id);
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const deleteProduct = async (
   id: string
 ): Promise<void> => {
