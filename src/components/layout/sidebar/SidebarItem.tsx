@@ -6,7 +6,7 @@ const SidebarItem = ({ label, to, icon: Icon }: NavigationItem) => {
     <Link
       to={to}
       activeProps={{
-        className: "bg-blue-50 text-blue-600 font-semibold",
+        className: "bg-blue-50 text-blue-600 font-bold",
       }}
       inactiveProps={{
         className: "text-slate-900 hover:bg-slate-100 hover:text-slate-900",

@@ -13,18 +13,23 @@ interface ProductTableProps {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: OnChangeFn<RowSelectionState>;
   onEdit: (product: Product) => void;
+  onDeactivate: (product: Product) => void;
 }
 
 const ProductTable = ({
   products,
   categories,
   onEdit,
+  onDeactivate,
   enableRowSelection,
   rowSelection,
   onRowSelectionChange,
 }: ProductTableProps) => {
-  const columns = productColumns(categories,onEdit);
-
+  const columns = productColumns({
+    categories,
+    onEdit,
+    onDeactivate,
+  });
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}

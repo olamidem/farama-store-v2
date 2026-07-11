@@ -18,7 +18,7 @@ const AddProductModal = ({ open, onClose }: AddProductModalProps) => {
     onClose();
   };
   return (
-    <Modal open={open} onClose={onClose} title="Add Product">
+    <Modal open={open} onClose={onClose} title="Add Product" size="sm">
       <ProductForm
         onCancel={onClose}
         onSubmit={handleSubmit}
