@@ -25,11 +25,11 @@ const DeleteProductModal = ({
 
   if (!product) return null;
 
-  const handleInitiate = () => {
+  const handleOpenConfirmation = () => {
     setShowConfirmDialog(true);
   };
 
-  const handleDeactivate = async () => {
+  const handleConfirmDeactivation = async () => {
     try {
       await deactivateProduct.mutateAsync(product.id);
       setShowConfirmDialog(false);
@@ -76,7 +76,7 @@ const DeleteProductModal = ({
               Cancel
             </Button>
 
-            <Button variant="danger" onClick={handleInitiate}>
+            <Button variant="danger" onClick={handleOpenConfirmation}>
               Initiate Deactivation
             </Button>
           </div>
@@ -94,7 +94,7 @@ const DeleteProductModal = ({
         cancelText="Cancel"
         loading={deactivateProduct.isPending}
         onCancel={() => setShowConfirmDialog(false)}
-        onConfirm={handleDeactivate}
+        onConfirm={handleConfirmDeactivation}
       />
     </>
   );
