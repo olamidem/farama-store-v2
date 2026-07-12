@@ -60,7 +60,7 @@ const ConfirmDialog = ({
   onConfirm,
   children,
 }: ConfirmDialogProps) => {
-  const [confirmation, setConfirmation] = useState("");
+  const [confirmationText, setConfirmationText] = useState("");
 
   if (!open) return null;
 
@@ -134,8 +134,8 @@ const ConfirmDialog = ({
               </Label>
 
               <Input
-                value={confirmation}
-                onChange={(e) => setConfirmation(e.target.value)}
+                value={confirmationText}
+                onChange={(e) => setConfirmationText(e.target.value)}
                 placeholder={`Type ${confirmationKeyword}`}
                 className="font-mono text-sm"
               />
@@ -151,7 +151,7 @@ const ConfirmDialog = ({
             <Button
               variant={config.buttonVariant}
               loading={loading}
-              disabled={confirmation.trim() !== confirmationKeyword}
+              disabled={confirmationText.trim() !== confirmationKeyword}
               onClick={onConfirm}
             >
               {variant === "danger" && <Trash2 className="h-4 w-4" />}
