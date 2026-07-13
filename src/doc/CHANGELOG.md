@@ -31,3 +31,23 @@ All notable changes to this project will be documented here.
 
 ### Fixed
 - Prevented accidental permanent deletion.
+
+## [Unreleased]
+
+### Planned
+
+### Issue #14 — Product Table Pagination, Search & Sorting
+
+#### Added
+
+- Server-side pagination
+- Product search by name and barcode
+- Column sorting
+- Reusable Pagination component
+- Loading skeleton
+- Empty state UI
+
+#### Changed
+
+- Product table now fetches paginated data from Supabase.
+- Product hook updated to support pagination, search and sorting.
