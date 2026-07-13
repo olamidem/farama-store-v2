@@ -51,3 +51,12 @@ All notable changes to this project will be documented here.
 
 - Product table now fetches paginated data from Supabase.
 - Product hook updated to support pagination, search and sorting.
+
+## Added
+
+- Modernized Products pagination UI.
+- Record range indicator.
+- Persistent page size.
+- Automatic page reset when filters change.
+- Sorting integration.
+- Improved page navigation.

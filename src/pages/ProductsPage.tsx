@@ -15,7 +15,7 @@ import DeleteProductModal from "../features/products/components/DeleteProductMod
 import RestoreProductModal from "../features/products/components/RestoreProductModal";
 import ExportProductDropdown from "../features/products/components/ExportProductDropdown";
 import ProductImportModal from "../features/products/components/ProductImportModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../components/ui/pagination/Pagination";
 
 const ProductsPage = () => {
@@ -35,12 +35,19 @@ const ProductsPage = () => {
     null,
   );
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(() => {
+    const saved = localStorage.getItem("products-page-size");
+    return saved ? Number(saved) : 10;
+  });
   const [sortBy, setSortBy] = useState<
     "created_at" | "name" | "selling_price" | "stock"
   >("created_at");
   const [ascending, setAscending] = useState(false);
+useEffect(() => {
+  localStorage.setItem("products-page-size", String(pageSize));
+}, [pageSize]);
 
+  
   const { data, isLoading, error } = useProducts({
     page,
     pageSize,
