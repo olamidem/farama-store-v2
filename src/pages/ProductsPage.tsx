@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import ProductHeader from "../features/products/components/ProductHeader";
 import ProductToolbar from "../features/products/components/ProductToolbar";
@@ -16,6 +15,8 @@ import DeleteProductModal from "../features/products/components/DeleteProductMod
 import RestoreProductModal from "../features/products/components/RestoreProductModal";
 import ExportProductDropdown from "../features/products/components/ExportProductDropdown";
 import ProductImportModal from "../features/products/components/ProductImportModal";
+import { useState } from "react";
+import Pagination from "../components/ui/pagination/Pagination";
 
 const ProductsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -27,35 +28,34 @@ const ProductsPage = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [status, setStatus] = useState("all");
-  const { data: products = [], isLoading, error } = useProducts();
   const { data: categories = [] } = useCategories();
   const [productToDeactivate, setProductToDeactivate] =
     useState<Product | null>(null);
   const [productToRestore, setProductToRestore] = useState<Product | null>(
     null,
   );
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortBy, setSortBy] = useState<
+    "created_at" | "name" | "selling_price" | "stock"
+  >("created_at");
+  const [ascending, setAscending] = useState(false);
 
-  const selectedProducts = useMemo(() => {
-    return products.filter((product) => rowSelection[String(product.id)]);
-  }, [products, rowSelection]);
+  const { data, isLoading, error } = useProducts({
+    page,
+    pageSize,
+    search,
+    category,
+    status: status as "all" | "active" | "inactive",
+    sortBy,
+    ascending,
+  });
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        (product.barcode ?? "").toLowerCase().includes(search.toLowerCase());
-
-      const matchesCategory =
-        category === "" || product.category_id === category;
-
-      const matchesStatus =
-        status === "all" ||
-        (status === "active" && product.is_active) ||
-        (status === "inactive" && !product.is_active);
-
-      return matchesSearch && matchesCategory && matchesStatus;
-    });
-  }, [products, search, category, status]);
+  const products = data?.data ?? [];
+  const totalProducts = data?.count ?? 0;
+  const selectedProducts = products.filter(
+    (product) => rowSelection[product.id],
+  );
 
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -98,7 +98,7 @@ const ProductsPage = () => {
         exportMenu={
           <ExportProductDropdown
             products={products}
-            filteredProducts={filteredProducts}
+            filteredProducts={products}
             categories={categories}
           />
         }
@@ -129,7 +129,7 @@ const ProductsPage = () => {
       {/* Table */}
 
       <ProductTable
-        products={filteredProducts}
+        products={products}
         categories={categories}
         isLoading={isLoading}
         enableRowSelection
@@ -178,6 +178,17 @@ const ProductsPage = () => {
         open={!!productToRestore}
         product={productToRestore}
         onClose={() => setProductToRestore(null)}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        totalItems={totalProducts}
+        onPageChange={setPage}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setPage(1);
+        }}
       />
     </motion.div>
   );

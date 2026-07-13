@@ -1,4 +1,5 @@
 import { supabase } from "../../../api/supabase";
+import type { PaginatedResponse, PaginationParams } from "../../../types/pagination";
 import type { BulkProductUpdate } from "../types/bulkUpdate";
 import type { CreateProductInput, Product, UpdateProductInput } from "../types/product";
 import { buildProductPayload } from "../utils/buildProductPayload";
@@ -18,16 +19,48 @@ export const createProduct = async (
   return data;
 };
 
-export const getProducts = async (): Promise<Product[]> => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    // .eq("is_active", true)
-    .order("created_at", { ascending: false });
+export const getProducts = async ({
+  page,
+  pageSize,
+  search,
+  category,
+  status,
+  sortBy = "created_at",
+  ascending = false,
+}: PaginationParams): Promise<PaginatedResponse<Product>> => {
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase.from("products").select("*", { count: "exact" });
+  // Search
+  if (search?.trim()) {
+    query = query.or(`name.ilike.%${search}%,barcode.ilike.%${search}%`);
+  }
+  // Category
+  if (category) {
+    query = query.eq("category_id", category);
+  }
+  // Status
+  if (status === "active") {
+    query = query.eq("is_active", true);
+  }
+  if (status === "inactive") {
+    query = query.eq("is_active", false);
+  }
+  // Sorting
+  query = query.order(sortBy, {
+    ascending,
+  });
+  // Pagination
+  query = query.range(from, to);
+  const { data, error, count } = await query;
   if (error) {
     throw new Error(error.message);
   }
-  return data;
+  return {
+    data: data ?? [],
+    count: count ?? 0,
+  };
 };
 
 export const getProduct = async (
