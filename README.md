@@ -51,3 +51,18 @@ Vercel
 - Validation
 - Preview
 - Import Summary
+
+
+## 🚧 Current Development
+
+### Issue #15 — Product Table Improvements
+
+The next milestone focuses on improving product browsing performance by introducing:
+
+- Server-side pagination
+- Product search
+- Column sorting
+- Improved loading states
+- Empty state handling
+
+This work prepares the product module for large inventories while maintaining a fast and responsive user experience.

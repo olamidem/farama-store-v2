@@ -13,11 +13,13 @@ import type { CreateProductInput, UpdateProductInput } from "../types/product";
 import { toast } from "sonner";
 import { getReadableError } from "../../../utils/error";
 import { QUERY_KEYS } from "../../../lib/queryKey";
+import type { PaginationParams } from "../../../types/pagination";
 
-export const useProducts = () => {
+export const useProducts = (params: PaginationParams) => {
   return useQuery({
-    queryKey: QUERY_KEYS.products,
-    queryFn: getProducts,
+    queryKey: [...QUERY_KEYS.products, params],
+    queryFn: () => getProducts(params),
+    placeholderData: (previousData) => previousData,
   });
 };
 

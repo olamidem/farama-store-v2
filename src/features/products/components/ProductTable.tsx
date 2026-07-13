@@ -15,6 +15,11 @@ interface ProductTableProps {
   onEdit: (product: Product) => void;
   onDeactivate: (product: Product) => void;
   onRestore: (product: Product) => void;
+  sortBy: "created_at" | "name" | "selling_price" | "stock";
+  ascending: boolean;
+  onSort: (column: "created_at" | "name" | "selling_price" | "stock") => void;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }
 
 const ProductTable = ({
@@ -26,12 +31,21 @@ const ProductTable = ({
   onEdit,
   onDeactivate,
   onRestore,
+  isLoading = false,
+  sortBy,
+  ascending,
+  onSort,
+  emptyTitle,
+  emptyDescription,
 }: ProductTableProps) => {
   const columns = productColumns({
     categories,
     onEdit,
     onDeactivate,
     onRestore,
+    sortBy,
+    ascending,
+    onSort,
   });
   return (
     <motion.div
@@ -48,6 +62,9 @@ const ProductTable = ({
         enableRowSelection={enableRowSelection}
         rowSelection={rowSelection}
         onRowSelectionChange={onRowSelectionChange}
+        emptyTitle={emptyTitle}
+        emptyDescription={emptyDescription}
+        isLoading={isLoading}
         getRowId={(product) => String(product.id)}
       />
     </motion.div>

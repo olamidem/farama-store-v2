@@ -5,6 +5,7 @@ import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
 import { formatCurrency } from "../../../utils/format";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
+import SortableHeader from "../../../components/ui/DataTable/SortableHeader";
 
 
 interface ProductColumnsProps {
@@ -12,6 +13,9 @@ interface ProductColumnsProps {
   onEdit: (product: Product) => void;
   onDeactivate: (product: Product) => void;
   onRestore: (product: Product) => void;
+  sortBy: "created_at" | "name" | "selling_price" | "stock";
+  ascending: boolean;
+  onSort: (column: "created_at" | "name" | "selling_price" | "stock") => void;
 }
 
 export const productColumns = ({
@@ -19,6 +23,9 @@ export const productColumns = ({
   onEdit,
   onDeactivate,
   onRestore,
+  sortBy,
+  ascending,
+  onSort,
 }: ProductColumnsProps): ColumnDef<Product>[] => [
   selectionColumn<Product>(),
   {
@@ -32,30 +39,38 @@ export const productColumns = ({
   },
   {
     accessorKey: "name",
-    header: "Product",
+    header: () => (
+      <SortableHeader
+        label="Product Name"
+        column="name"
+        currentSort={sortBy}
+        ascending={ascending}
+        onSort={onSort}
+      />
+    ),
     cell: ({ row }) => {
-       const product = row.original;
-       const isLowStock = product.stock <= product.min_stock_alert;
-       const firstLetter = product.name
-         ? product.name.charAt(0).toUpperCase()
-         : "P";
-       return (
-         <div className="flex items-center gap-3">
-           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-600 border border-slate-200 uppercase shrink-0">
-             {firstLetter}
-           </div>
-           <div className="flex flex-col min-w-0">
-             <span className="font-bold text-slate-900 truncate">
-               {product.name}
-             </span>
-             {isLowStock && (
-               <span className="text-[9px] font-black tracking-wider text-rose-600 uppercase mt-0.5">
-                 ⚠️ Below Alert Limit
-               </span>
-             )}
-           </div>
-         </div>
-       );
+      const product = row.original;
+      const isLowStock = product.stock <= product.min_stock_alert;
+      const firstLetter = product.name
+        ? product.name.charAt(0).toUpperCase()
+        : "P";
+      return (
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-600 border border-slate-200 uppercase shrink-0">
+            {firstLetter}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold text-slate-900 truncate">
+              {product.name}
+            </span>
+            {isLowStock && (
+              <span className="text-[9px] font-black tracking-wider text-rose-600 uppercase mt-0.5">
+                ⚠️ Below Alert Limit
+              </span>
+            )}
+          </div>
+        </div>
+      );
     },
   },
   {
@@ -78,7 +93,15 @@ export const productColumns = ({
   },
   {
     accessorKey: "selling_price",
-    header: "Selling Price",
+    header: () => (
+      <SortableHeader
+        label="Selling Price"
+        column="selling_price"
+        currentSort={sortBy}
+        ascending={ascending}
+        onSort={onSort}
+      />
+    ),
     cell: ({ row }) => (
       <span className="font-bold text-slate-900">
         {formatCurrency(row.original.selling_price)}
@@ -96,7 +119,15 @@ export const productColumns = ({
   },
   {
     accessorKey: "stock",
-    header: "Stock",
+    header: () => (
+      <SortableHeader
+        label="Stock"
+        column="stock"
+        currentSort={sortBy}
+        ascending={ascending}
+        onSort={onSort}
+      />
+    ),
     cell: ({ row }) => {
       const lowStock = row.original.stock <= row.original.min_stock_alert;
       return (
