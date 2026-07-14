@@ -1,6 +1,6 @@
 import type { Product } from "../types/product";
 import type { Category } from "../../categories/types/category";
-import type { ValidatedImportRecord, ImportSummary } from "../types/import";
+import type { ValidatedImportRecord, ImportSummary, ImportAction } from "../types/import";
 import type { ParsedImportRecord } from "../types/importFile";
 
 export const validateImportRecords = (
@@ -23,7 +23,6 @@ export const validateImportRecords = (
 
   rawRecords.forEach((raw, index) => {
     const rowNumber = index + 2;
-
     const errors: string[] = [];
 
     //---------------------------------------
@@ -33,7 +32,6 @@ export const validateImportRecords = (
     const name = raw.name.trim();
     const barcode = raw.barcode.trim();
     const sku = raw.sku.trim();
-
     const selling_price = Number(raw.selling_price);
     const cost_price = Number(raw.cost_price);
     const stock = Number(raw.stock);
@@ -118,12 +116,6 @@ export const validateImportRecords = (
           product.category_id === category_id,
       ) ?? null;
 
-    if (duplicateProduct) {
-      errors.push(
-        `Product "${name}" already exists in category "${category_name}".`,
-      );
-    }
-
     //---------------------------------------
     // Barcode
     //---------------------------------------
@@ -148,40 +140,44 @@ export const validateImportRecords = (
 
     validatedRecords.push({
       rowNumber,
-
       raw,
-
       name,
       barcode,
       sku,
-
       selling_price,
       cost_price,
       stock,
-
       category_identifier,
       category_id,
       category_name,
-
       min_stock_alert,
-
       duplicateProduct,
-
       isValid: errors.length === 0,
       errors,
+      action: duplicateProduct ? "skip" : "create",
     });
   });
 
-  const total = validatedRecords.length;
-  const valid = validatedRecords.filter((record) => record.isValid).length;
-  const failed = total - valid;
+const total = validatedRecords.length;
+const valid = validatedRecords.filter((record) => record.isValid).length;
+const failed = total - valid;
+const newProducts = validatedRecords.filter(
+  (record) => record.isValid && record.duplicateProduct === null,
+).length;
+const duplicateProducts = validatedRecords.filter(
+  (record) => record.isValid && record.duplicateProduct !== null,
+).length;
 
-  return {
-    validatedRecords,
-    summary: {
-      total,
-      valid,
-      failed,
-    },
-  };
+return {
+  validatedRecords,
+  summary: {
+    total,
+    valid,
+    failed,
+    newProducts,
+    duplicateProducts,
+  },
+};
+
+  
 };

@@ -15,6 +15,7 @@ export const ImportPreviewTable = ({
           <tr className="uppercase tracking-wider">
             <th className="w-12 p-3 text-center">Row</th>
             <th className="p-3">Status</th>
+            <th className="p-3">Action</th>
             <th className="min-w-45 p-3">Product Name</th>
             <th className="p-3">Barcode</th>
             <th className="p-3">Category</th>
@@ -28,7 +29,7 @@ export const ImportPreviewTable = ({
           {previewRecords.length === 0 ? (
             <tr>
               <td
-                colSpan={8}
+                colSpan={9}
                 className="p-8 text-center font-medium text-slate-400"
               >
                 No preview records to display.
@@ -47,16 +48,39 @@ export const ImportPreviewTable = ({
                 </td>
 
                 <td className="p-3">
-                  {record.isValid ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                      <CheckCircle size={10} />
-                      Valid
-                    </span>
-                  ) : (
+                  {!record.isValid ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
                       <AlertCircle size={10} />
                       Invalid
                     </span>
+                  ) : record.duplicateProduct ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                      Existing
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                      <CheckCircle size={10} />
+                      New
+                    </span>
+                  )}
+                </td>
+
+                <td className="p-3">
+                  {record.isValid ? (
+                    <span
+                      className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        record.action === "create"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : record.action === "update"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {record.action.charAt(0).toUpperCase() +
+                        record.action.slice(1)}
+                    </span>
+                  ) : (
+                    <span className="text-slate-400">—</span>
                   )}
                 </td>
 
@@ -65,9 +89,7 @@ export const ImportPreviewTable = ({
                   title={record.name}
                 >
                   {record.name || (
-                    <span className="italic text-rose-500">
-                      Missing name
-                    </span>
+                    <span className="italic text-rose-500">Missing name</span>
                   )}
                 </td>
 
@@ -89,7 +111,7 @@ export const ImportPreviewTable = ({
                       {String(
                         record.raw?.Category ??
                           record.raw?.category ??
-                          "Missing Category"
+                          "Missing Category",
                       )}
                     </span>
                   )}
@@ -117,9 +139,7 @@ export const ImportPreviewTable = ({
 
                 <td
                   className={`p-3 text-right font-semibold ${
-                    record.stock < 0
-                      ? "text-rose-600"
-                      : "text-blue-600"
+                    record.stock < 0 ? "text-rose-600" : "text-blue-600"
                   }`}
                 >
                   {record.stock}

@@ -1,6 +1,9 @@
 import type { ParsedImportRecord } from "./importFile";
 import type { Product } from "./product";
 
+export type ImportAction = "create" | "update" | "skip";
+export type DuplicateStrategy = "skip" | "update";
+
 export interface ValidatedImportRecord {
   rowNumber: number;
   raw: ParsedImportRecord;
@@ -17,10 +20,13 @@ export interface ValidatedImportRecord {
   duplicateProduct: Product | null;
   isValid: boolean;
   errors: string[];
+ action:  ImportAction;
 }
 
 export interface ImportSummary {
   total: number;
   valid: number;
   failed: number;
+  newProducts:number;
+  duplicateProducts: number
 }

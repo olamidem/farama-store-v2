@@ -9,6 +9,9 @@ import { validateImportRecords } from "../utils/ValidateImport";
 import { getExistingProductsForImport } from "../services/getExistingProductsForImport.service";
 import { mapRowToProduct } from "../utils/mapRowToProduct";
 
+export type DuplicateStrategy = "skip" | "update";
+
+
 export const useProductImport = (
   categories: Category[],
   onSuccess?: () => void,
@@ -19,6 +22,7 @@ export const useProductImport = (
   const [summary, setSummary] = useState<ImportSummary | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importCompleted, setImportCompleted] = useState(false);
+  const [duplicateStrategy, setDuplicateStrategy] =useState<DuplicateStrategy>("skip");
 
   const resetImportState = () => {
     setFile(null);
@@ -110,6 +114,37 @@ const processImportFile = async (selectedFile: File) => {
     },
   });
 
+  const updateImportAction = (
+    rowNumber: number,
+    action: "create" | "update" | "skip",
+  ) => {
+    setRecords((previous) =>
+      previous.map((record) =>
+        record.rowNumber === rowNumber
+          ? {
+              ...record,
+              action,
+            }
+          : record,
+      ),
+    );
+  };
+
+  const applyDuplicateStrategy = (strategy: DuplicateStrategy) => {
+    setDuplicateStrategy(strategy);
+    setRecords((current) =>
+      current.map((record) => {
+        if (!record.duplicateProduct) {
+          return record;
+        }
+        return {
+          ...record,
+          action: strategy,
+        };
+      }),
+    );
+  };
+
   return {
     file,
     records,
@@ -119,5 +154,10 @@ const processImportFile = async (selectedFile: File) => {
     confirmImport: importMutation.mutate,
     resetImportState,
     importCompleted,
+    updateImportAction ,
+    duplicateStrategy,
+    applyDuplicateStrategy,
   };
 };
+
+
