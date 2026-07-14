@@ -83,11 +83,7 @@ const processImportFile = async (selectedFile: File) => {
   const importMutation = useMutation({
     mutationFn: async () => {
       const productsToCreate = records
-  .filter(
-    (record) =>
-      record.isValid &&
-      record.action === "create",
-  )
+        .filter((record) => record.isValid && record.action === "create")
         .map((record) => ({
           name: record.name,
           barcode: record.barcode,
@@ -99,6 +95,13 @@ const processImportFile = async (selectedFile: File) => {
           min_stock_alert: record.min_stock_alert,
           is_active: true,
         }));
+
+      const productsToUpdate = records.filter(
+        (record) => record.isValid && record.action === "update",
+      );
+
+      // TODO:
+      // await updateProducts(productsToUpdate);
       if (productsToCreate.length === 0) {
         throw new Error("No valid products to import.");
       }
@@ -161,6 +164,7 @@ const processImportFile = async (selectedFile: File) => {
     updateImportAction ,
     duplicateStrategy,
     applyDuplicateStrategy,
+    
   };
 };
 
