@@ -82,8 +82,12 @@ const processImportFile = async (selectedFile: File) => {
    */
   const importMutation = useMutation({
     mutationFn: async () => {
-      const validProducts = records
-        .filter((record) => record.isValid)
+      const productsToCreate = records
+  .filter(
+    (record) =>
+      record.isValid &&
+      record.action === "create",
+  )
         .map((record) => ({
           name: record.name,
           barcode: record.barcode,
@@ -95,10 +99,10 @@ const processImportFile = async (selectedFile: File) => {
           min_stock_alert: record.min_stock_alert,
           is_active: true,
         }));
-      if (validProducts.length === 0) {
+      if (productsToCreate.length === 0) {
         throw new Error("No valid products to import.");
       }
-      await createProducts(validProducts);
+      await createProducts(productsToCreate);
     },
     onSuccess: async () => {
       toast.success(`${summary?.valid ?? 0} products imported successfully.`);

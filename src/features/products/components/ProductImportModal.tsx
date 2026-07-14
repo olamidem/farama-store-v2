@@ -10,6 +10,8 @@ import ImportProgress from "./ImportProgress";
 import ImportFileInfo from "./ImportFileInfo";
 import { ImportPreviewTable } from "./ImportPreviewtable";
 import type { Category } from "../../categories/types/category";
+import DuplicateHandling from "./DuplicateHandling";
+import ImportPlan from "./ImportantPlan";
 
 interface ProductImportModalProps {
   open: boolean;
@@ -31,6 +33,8 @@ const ProductImportModal = ({
     confirmImport,
     resetImportState,
     importCompleted,
+    duplicateStrategy,
+    applyDuplicateStrategy
   } = useProductImport( categories, onClose);
 
   const handleClose = () => {
@@ -146,8 +150,19 @@ const ProductImportModal = ({
                     iconTextColor="text-rose-600"
                     progressColor="bg-rose-500"
                   />
-                </div>
-
+                  </div>
+                  
+                  {summary.duplicateProducts > 0 && (
+                    <DuplicateHandling
+                      duplicateCount={summary.duplicateProducts}
+                      strategy={duplicateStrategy}
+                      onChange={applyDuplicateStrategy}
+                    />
+                  )}
+               <ImportPlan
+                  records={records}
+                  summary={summary}
+               />
                 {summary.failed > 0 && (
                   <ImportValidationTable records={records} />
                 )}
@@ -172,7 +187,9 @@ const ProductImportModal = ({
                       again.
                     </p>
                   </div>
-                )}
+                  )}
+                  
+
 
                 <ImportFooter
                   summary={summary}

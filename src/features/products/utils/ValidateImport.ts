@@ -1,6 +1,6 @@
 import type { Product } from "../types/product";
 import type { Category } from "../../categories/types/category";
-import type { ValidatedImportRecord, ImportSummary, ImportAction } from "../types/import";
+import type { ValidatedImportRecord, ImportSummary } from "../types/import";
 import type { ParsedImportRecord } from "../types/importFile";
 
 export const validateImportRecords = (
