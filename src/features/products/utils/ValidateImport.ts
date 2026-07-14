@@ -1,6 +1,10 @@
 import type { Product } from "../types/product";
 import type { Category } from "../../categories/types/category";
-import type { ValidatedImportRecord, ImportSummary } from "../types/import";
+import type {
+  ValidatedImportRecord,
+  ImportSummary,
+  ImportAction,
+} from "../types/import";
 import type { ParsedImportRecord } from "../types/importFile";
 
 export const validateImportRecords = (
@@ -32,6 +36,7 @@ export const validateImportRecords = (
     const name = raw.name.trim();
     const barcode = raw.barcode.trim();
     const sku = raw.sku.trim();
+
     const selling_price = Number(raw.selling_price);
     const cost_price = Number(raw.cost_price);
     const stock = Number(raw.stock);
@@ -104,20 +109,7 @@ export const validateImportRecords = (
     }
 
     //---------------------------------------
-    // Duplicate Product
-    //---------------------------------------
-
-    const normalizedName = name.toLowerCase();
-
-    const duplicateProduct =
-      existingProducts.find(
-        (product) =>
-          product.name.trim().toLowerCase() === normalizedName &&
-          product.category_id === category_id,
-      ) ?? null;
-
-    //---------------------------------------
-    // Barcode
+    // Barcode Validation
     //---------------------------------------
 
     if (barcode) {
@@ -135,49 +127,83 @@ export const validateImportRecords = (
     }
 
     //---------------------------------------
-    // Push Record
+    // Existing Product
+    //---------------------------------------
+
+    const duplicateProduct =
+      existingProducts.find(
+        (product) =>
+          product.name.trim().toLowerCase() === name.toLowerCase() &&
+          product.category_id === category_id,
+      ) ?? null;
+
+    //---------------------------------------
+    // Decide Action
+    //---------------------------------------
+
+    let action: ImportAction = "create";
+
+    if (errors.length === 0 && duplicateProduct) {
+      action = "skip";
+    }
+
+    //---------------------------------------
+    // Build Record
     //---------------------------------------
 
     validatedRecords.push({
       rowNumber,
       raw,
+
       name,
       barcode,
       sku,
+
       selling_price,
       cost_price,
       stock,
+
       category_identifier,
       category_id,
       category_name,
+
       min_stock_alert,
+
       duplicateProduct,
+
       isValid: errors.length === 0,
       errors,
-      action: duplicateProduct ? "skip" : "create",
+
+      action,
     });
   });
 
-const total = validatedRecords.length;
-const valid = validatedRecords.filter((record) => record.isValid).length;
-const failed = total - valid;
-const newProducts = validatedRecords.filter(
-  (record) => record.isValid && record.duplicateProduct === null,
-).length;
-const duplicateProducts = validatedRecords.filter(
-  (record) => record.isValid && record.duplicateProduct !== null,
-).length;
+  //---------------------------------------
+  // Summary
+  //---------------------------------------
 
-return {
-  validatedRecords,
-  summary: {
-    total,
-    valid,
-    failed,
-    newProducts,
-    duplicateProducts,
-  },
-};
+  const total = validatedRecords.length;
 
-  
+  const valid = validatedRecords.filter((record) => record.isValid).length;
+
+  const failed = total - valid;
+
+  const newProducts = validatedRecords.filter(
+    (record) => record.isValid && record.action === "create",
+  ).length;
+
+  const duplicateProducts = validatedRecords.filter(
+    (record) => record.isValid && record.action === "skip",
+  ).length;
+
+  return {
+    validatedRecords,
+    summary: {
+      total,
+      valid,
+      failed,
+      newProducts,
+      duplicateProducts,
+    },
+  };
 };

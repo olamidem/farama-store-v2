@@ -1,7 +1,7 @@
 import type { ParsedImportRecord } from "./importFile";
 import type { Product } from "./product";
 
-export type ImportAction = "create" | "update" | "skip";
+export type ImportAction = "create" | "update" | "skip" ;
 export type DuplicateStrategy = "skip" | "update";
 
 export interface ValidatedImportRecord {
