@@ -3,6 +3,7 @@ export interface Product {
   name: string;
   sku: string;
   barcode?: string;
+  description?: string;
   selling_price: number;
   cost_price: number;
   stock: number;
@@ -17,12 +18,13 @@ export interface CreateProductInput {
   name: string;
   sku: string;
   barcode?: string;
+  description?: string;
   selling_price: number;
   cost_price: number;
   stock: number;
   category_id: string;
   min_stock_alert: number;
-  is_active:boolean
+  is_active: boolean;
 }
 
 export type UpdateProductInput = Partial<CreateProductInput>;
