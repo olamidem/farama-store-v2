@@ -7,6 +7,7 @@ import {
   deleteProduct,
   getProduct,
   getProducts,
+  getProductStats,
   restoreProduct,
   updateProduct,
 } from "../services/product.service";
@@ -21,6 +22,13 @@ export const useProducts = (params: PaginationParams) => {
     queryKey: [...QUERY_KEYS.products, params],
     queryFn: () => getProducts(params),
     placeholderData: (previousData) => previousData,
+  });
+};
+
+export const useProductStats = () => {
+  return useQuery({
+    queryKey: [...QUERY_KEYS.products, "stats"],
+    queryFn: getProductStats,
   });
 };
 
