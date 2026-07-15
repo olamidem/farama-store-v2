@@ -1,5 +1,6 @@
 import { supabase } from "../../../api/supabase";
 import { throwSupabaseError } from "../../../utils/supabaseError";
+import { formatSentenceCase } from "../../../utils/formatSentenceCase";
 import type {
   Category,
   CreateCategoryInput,
@@ -18,9 +19,14 @@ export const getCategories = async (): Promise<Category[]> => {
 export const createCategory = async (
   category: CreateCategoryInput,
 ): Promise<Category> => {
+  const payload = {
+    ...category,
+    name: formatSentenceCase(category.name),
+    sku_prefix: category.sku_prefix?.toUpperCase().trim(),
+  };
   const { data, error } = await supabase
     .from("categories")
-    .insert(category)
+    .insert(payload)
     .select()
     .single();
   throwSupabaseError(error);
@@ -31,9 +37,16 @@ export const updateCategory = async (
   id: string,
   category: UpdateCategoryInput,
 ): Promise<Category> => {
+  const payload = {
+    ...category,
+    ...(category.name ? { name: formatSentenceCase(category.name) } : {}),
+    ...(category.sku_prefix
+      ? { sku_prefix: category.sku_prefix.toUpperCase().trim() }
+      : {}),
+  };
   const { data, error } = await supabase
     .from("categories")
-    .update(category)
+    .update(payload)
     .eq("id", id)
     .select()
     .single();
