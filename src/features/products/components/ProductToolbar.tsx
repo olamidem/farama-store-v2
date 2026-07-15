@@ -1,9 +1,11 @@
 import React from "react";
-import { Download, ChevronDown } from "lucide-react";
+import { Download, ChevronDown, Search } from "lucide-react";
 import Select from "../../../components/ui/Select";
 import type { Category } from "../../categories/types/category";
 
 interface ProductToolbarProps {
+  search: string;
+  onSearchChange: (value: string) => void;
   category: string;
   status: string;
   stockStatus: string;
@@ -15,6 +17,8 @@ interface ProductToolbarProps {
 }
 
 const ProductToolbar = ({
+  search,
+  onSearchChange,
   category,
   status,
   stockStatus,
@@ -25,9 +29,21 @@ const ProductToolbar = ({
   exportMenu,
 }: ProductToolbarProps) => {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
+    <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
       {/* Left Filters */}
       <div className="flex flex-wrap items-center gap-3">
+        {/* Search bar */}
+        <div className="relative w-64">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-9 w-full pl-9 pr-4 rounded-lg border border-slate-200 bg-white text-xs outline-none transition focus:border-slate-400 focus:ring-1 focus:ring-slate-400 shadow-sm placeholder:text-slate-400"
+          />
+        </div>
+
         <div className="w-48">
           <Select
             placeholder="All Categories"
@@ -72,7 +88,7 @@ const ProductToolbar = ({
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-2 self-end md:self-auto">
+      <div className="flex items-center gap-2 self-end lg:self-auto">
         {exportMenu || (
           <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm">
             <Download size={14} className="text-slate-500" />
