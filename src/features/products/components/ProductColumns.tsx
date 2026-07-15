@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import Badge from "../../../components/ui/Badge";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
-import { formatCurrency } from "../../../utils/formatCurrenty";
+import { formatCurrency } from "../../../utils/format";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
 import SortableHeader from "../../../components/ui/DataTable/SortableHeader";
 import { ProductAvatar } from "./ProductAvatar";
@@ -54,9 +54,7 @@ export const productColumns = ({
       const category = categories.find((c) => c.id === product.category_id);
       return (
         <div className="flex items-center gap-3">
-          <ProductAvatar
-            name={product.name}
-          />
+          <ProductAvatar name={product.name} />
           <div className="flex flex-col min-w-0">
             <span className="font-bold text-slate-900 truncate">
               {product.name}
