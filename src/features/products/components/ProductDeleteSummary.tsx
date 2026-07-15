@@ -1,7 +1,7 @@
 import {  Info, Layers, Package } from "lucide-react";
 
 import Badge from "../../../components/ui/Badge";
-import { formatCurrency } from "../../../utils/format";
+import { formatCurrency } from "../../../utils/formatCurrenty";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
 

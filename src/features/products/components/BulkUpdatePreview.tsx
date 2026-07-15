@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import type { BulkUpdateType } from "../../../utils/calculateBulkPrice";
-import { formatCurrency } from "../../../utils/format";
+import { formatCurrency } from "../../../utils/formatCurrenty";
 import type { Product } from "../types/product";
 
 interface PreviewProduct extends Product {

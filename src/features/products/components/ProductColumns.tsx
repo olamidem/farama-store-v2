@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import Badge from "../../../components/ui/Badge";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
-import { formatCurrency } from "../../../utils/format";
+import { formatCurrency } from "../../../utils/formatCurrenty";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
 import SortableHeader from "../../../components/ui/DataTable/SortableHeader";
 import { ProductAvatar } from "./ProductAvatar";

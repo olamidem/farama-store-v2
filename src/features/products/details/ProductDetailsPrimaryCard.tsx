@@ -56,10 +56,10 @@ export const ProductDetailsPrimaryCard = ({
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Visual Avatar Block */}
-      <div className="flex-shrink-0 flex items-center justify-center">
+      <div className="shrink-0 flex items-center justify-center">
         <div className="relative h-44 w-44 rounded-2xl border border-slate-100 bg-slate-50 p-2 flex items-center justify-center shadow-inner overflow-hidden">
           <div
-            className={`w-full h-full rounded-xl bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center font-bold text-5xl select-none shadow-sm`}
+            className={`w-full h-full rounded-xl bg-linear-to-br ${gradientClass} flex flex-col items-center justify-center font-bold text-5xl select-none shadow-sm`}
           >
             {firstLetter}
             <span className="text-[10px] tracking-widest font-bold opacity-70 mt-1 uppercase">
