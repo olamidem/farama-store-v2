@@ -1,11 +1,12 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import Badge from "../../../components/ui/Badge";
-import Button from "../../../components/ui/Button";
 import type { Category } from "../../categories/types/category";
 import type { Product } from "../types/product";
 import { formatCurrency } from "../../../utils/format";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
 import SortableHeader from "../../../components/ui/DataTable/SortableHeader";
+import { ProductAvatar } from "./ProductAvatar";
+import { Eye, Pencil, Trash2, RotateCcw } from "lucide-react";
 
 interface ProductColumnsProps {
   categories: Category[];
@@ -28,11 +29,11 @@ export const productColumns = ({
 }: ProductColumnsProps): ColumnDef<Product>[] => [
   selectionColumn<Product>(),
   {
-    accessorKey: "barcode",
-    header: "Barcode",
+    accessorKey: "sku",
+    header: "SKU",
     cell: ({ row }) => (
-      <span className="rounded-md font-mono text-xs font-semibold text-slate-600">
-        {row.original.barcode}
+      <span className="rounded-md font-mono text-[11px] font-semibold text-slate-600 bg-slate-100 border border-slate-200/60 px-1.5 py-0.5">
+        {row.original.sku}
       </span>
     ),
   },
@@ -40,7 +41,7 @@ export const productColumns = ({
     accessorKey: "name",
     header: () => (
       <SortableHeader
-        label="Product Name"
+        label="Product"
         column="name"
         currentSort={sortBy}
         ascending={ascending}
@@ -49,24 +50,17 @@ export const productColumns = ({
     ),
     cell: ({ row }) => {
       const product = row.original;
-      const isLowStock = product.stock <= product.min_stock_alert;
-      const firstLetter = product.name
-        ? product.name.charAt(0).toUpperCase()
-        : "P";
+      const category = categories.find((c) => c.id === product.category_id);
       return (
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-600 border border-slate-200 uppercase shrink-0">
-            {firstLetter}
-          </div>
+          <ProductAvatar name={product.name} />
           <div className="flex flex-col min-w-0">
             <span className="font-bold text-slate-900 truncate">
               {product.name}
             </span>
-            {isLowStock && (
-              <span className="text-[9px] font-black tracking-wider text-rose-600 uppercase mt-0.5">
-                ⚠️ Below Alert Limit
-              </span>
-            )}
+            <span className="text-xs text-slate-500 truncate mt-0.5">
+              {product.description || category?.name || "No description"}
+            </span>
           </div>
         </div>
       );
@@ -111,7 +105,7 @@ export const productColumns = ({
     accessorKey: "cost_price",
     header: "Cost Price",
     cell: ({ row }) => (
-      <span className="text-slate-500">
+      <span className="text-slate-500 font-medium">
         {formatCurrency(row.original.cost_price)}
       </span>
     ),
@@ -128,15 +122,20 @@ export const productColumns = ({
       />
     ),
     cell: ({ row }) => {
-      const lowStock = row.original.stock <= row.original.min_stock_alert;
+      const stock = row.original.stock;
+      const isLowStock = stock <= row.original.min_stock_alert;
+      const isOutOfStock = stock === 0;
+
+      let textColor = "text-emerald-600 font-medium";
+      if (isOutOfStock) {
+        textColor = "text-rose-600 font-medium";
+      } else if (isLowStock) {
+        textColor = "text-amber-600 font-medium";
+      }
+
       return (
-        <span
-          className={`font-semibold ${
-            lowStock ? "text-rose-600" : "text-slate-800"
-          }`}
-        >
-          {row.original.stock}
-          <span className="ml-1 text-xs text-slate-400">pcs</span>
+        <span className={textColor}>
+          {stock} {stock === 1 ? "unit" : "units"}
         </span>
       );
     },
@@ -144,11 +143,19 @@ export const productColumns = ({
   {
     accessorKey: "is_active",
     header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={row.original.is_active ? "success" : "danger"}>
-        {row.original.is_active ? "Active" : "Inactive"}
-      </Badge>
-    ),
+    cell: ({ row }) => {
+      const product = row.original;
+      if (!product.is_active) {
+        return <Badge variant="default">Inactive</Badge>;
+      }
+      if (product.stock === 0) {
+        return <Badge variant="danger">Out of Stock</Badge>;
+      }
+      if (product.stock <= product.min_stock_alert) {
+        return <Badge variant="warning">Low Stock</Badge>;
+      }
+      return <Badge variant="success">Active</Badge>;
+    },
   },
   {
     id: "actions",
@@ -158,30 +165,42 @@ export const productColumns = ({
 
       if (product.is_active) {
         return (
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
+          <div className="flex items-center gap-1.5">
+            <button
               onClick={() => onEdit(product)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-700 transition duration-150"
+              title="View details"
             >
-              Edit
-            </Button>
-
-            <Button
-              size="sm"
-              variant="danger"
+              <Eye size={15} />
+            </button>
+            <button
+              onClick={() => onEdit(product)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-700 transition duration-150"
+              title="Edit Product"
+            >
+              <Pencil size={14} />
+            </button>
+            <button
               onClick={() => onDeactivate(product)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition duration-150"
+              title="Deactivate Product"
             >
-              Deactivate
-            </Button>
+              <Trash2 size={14} />
+            </button>
           </div>
         );
       }
 
       return (
-        <Button size="sm" variant="primary" onClick={() => onRestore(product)}>
-          Restore
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => onRestore(product)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600 transition duration-150"
+            title="Restore Product"
+          >
+            <RotateCcw size={14} />
+          </button>
+        </div>
       );
     },
   },

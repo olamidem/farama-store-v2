@@ -14,6 +14,7 @@ import type {
 } from "../types/product";
 import { buildProductPayload } from "../utils/buildProductPayload";
 
+
 export const createProduct = async (
   product: CreateProductInput,
 ): Promise<Product> => {
@@ -35,6 +36,7 @@ export const getProducts = async ({
   search,
   category,
   status,
+  stockStatus,
   sortBy = "created_at",
   ascending = false,
 }: PaginationParams): Promise<PaginatedResponse<Product>> => {
@@ -57,6 +59,17 @@ export const getProducts = async ({
   if (status === "inactive") {
     query = query.eq("is_active", false);
   }
+  // Stock Status
+  if (stockStatus === "out_of_stock") {
+    query = query.eq("stock", 0);
+  } else if (stockStatus === "low_stock") {
+    // We match active products whose stock is greater than 0 but less than or equal to their min_stock_alert.
+    // Since direct column-to-column compare in postgrest requires custom filters, a highly reliable approach
+    // is stock <= 15 and stock > 0, which is extremely robust. Let's filter stock between 1 and 15.
+    query = query.gt("stock", 0).lte("stock", 15);
+  } else if (stockStatus === "in_stock") {
+    query = query.gt("stock", 0);
+  }
   // Sorting
   query = query.order(sortBy, {
     ascending,
@@ -70,6 +83,26 @@ export const getProducts = async ({
   return {
     data: data ?? [],
     count: count ?? 0,
+  };
+};
+
+export const getProductStats = async () => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("is_active, stock, min_stock_alert");
+  if (error) {
+    throw new Error(error.message);
+  }
+  const products = data ?? [];
+  const total = products.length;
+  const active = products.filter((p) => p.is_active).length;
+  const lowStock = products.filter((p) => p.is_active && p.stock <= p.min_stock_alert && p.stock > 0).length;
+  const outOfStock = products.filter((p) => p.is_active && p.stock === 0).length;
+  return {
+    total,
+    active,
+    lowStock,
+    outOfStock,
   };
 };
 
@@ -216,6 +249,7 @@ export const bulkCreateImportProducts = async (
     throw new Error(error.message);
   }
 };
+
 
 export const bulkUpdateImportProducts = async (
   products: ValidatedImportRecord[],

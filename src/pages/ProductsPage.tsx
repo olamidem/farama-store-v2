@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react";
 import type { RowSelectionState } from "@tanstack/react-table";
 import ErrorState from "../components/common/ErrorState";
 import Pagination from "../components/ui/pagination/Pagination";
-import ProductHeader from "../features/products/components/ProductHeader";
 import ProductToolbar from "../features/products/components/ProductToolbar";
 import ProductTable from "../features/products/components/ProductTable";
 import ProductBulkActions from "../features/products/components/ProductBulkActions";
@@ -15,17 +14,18 @@ import RestoreProductModal from "../features/products/components/RestoreProductM
 import BulkUpdateModal from "../features/products/components/BulkUpdateModal";
 import ProductImportModal from "../features/products/components/ProductImportModal";
 import ExportProductDropdown from "../features/products/components/ExportProductDropdown";
-import {
-  useProducts,
-  useBulkDeactivateProducts,
-} from "../features/products/hooks/useProducts";
+import { useProducts, useBulkDeactivateProducts, useProductStats } from "../features/products/hooks/useProducts";
 import { useCategories } from "../features/categories/hooks/useCategories";
 import type { Product } from "../features/products/types/product";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { useProductExport } from "../features/products/hooks/useProductExport";
+import { Plus, Search, Bell, ChevronDown, Upload, Download, FileText } from "lucide-react";
+import ProductStatCards from "../features/products/components/ProductStartCards";
 
 const ProductsPage = () => {
   // ==========================
   // Modals
+  // ==========================
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -40,6 +40,7 @@ const ProductsPage = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("all");
+  const [stockStatus, setStockStatus] = useState<"all" | "in_stock" | "low_stock" | "out_of_stock">("all");
 
   // ==========================
   // Pagination
@@ -95,9 +96,13 @@ const ProductsPage = () => {
     search,
     category,
     status: status as "all" | "active" | "inactive",
+    stockStatus,
     sortBy,
     ascending,
   });
+
+  const { data: stats, isLoading: isStatsLoading } = useProductStats();
+  const { exportProducts, downloadTemplate } = useProductExport();
 
   const bulkDeactivate = useBulkDeactivateProducts();
 
@@ -126,7 +131,7 @@ const ProductsPage = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [search, category, status]);
+  }, [search, category, status, stockStatus]);
 
   // ==========================
   // Clear selection when page changes
@@ -181,6 +186,14 @@ const ProductsPage = () => {
     setPage(1);
   };
 
+  const handleExportAll = () => {
+    exportProducts(products, categories, "xlsx");
+  };
+
+  const handleDownloadTemplateXlsx = () => {
+    downloadTemplate("xlsx");
+  };
+
   // ==========================
   // Error
   // ==========================
@@ -201,9 +214,89 @@ const ProductsPage = () => {
       exit={{ opacity: 0, y: -10 }}
       className="space-y-6"
     >
-      <ProductHeader
-        onAddProduct={() => setIsAddModalOpen(true)}
-        onImportProduct={() => setIsImportModalOpen(true)}
+      {/* High-Fidelity Header Row */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Products
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Manage and view all products in your store.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search bar */}
+          <div className="relative w-72">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-10 w-full pl-9 pr-4 rounded-xl border border-slate-200 bg-white text-sm outline-none transition focus:border-slate-400 focus:ring-1 focus:ring-slate-400 shadow-sm"
+            />
+          </div>
+
+          {/* Bell Icon Notification */}
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition cursor-pointer shadow-sm">
+            <Bell size={18} />
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white ring-2 ring-white">
+              2
+            </span>
+          </div>
+
+          {/* Add Product Button */}
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-1.5 h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-sm transition duration-150"
+          >
+            <Plus size={16} />
+            <span>Add Product</span>
+            <ChevronDown size={14} className="opacity-80" />
+          </button>
+        </div>
+      </div>
+
+      {/* Top Action Color Buttons */}
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <button
+          onClick={() => setIsImportModalOpen(true)}
+          className="flex items-center gap-1.5 h-9 px-4 rounded-xl border border-blue-200 bg-blue-50/15 hover:bg-blue-50/60 text-blue-600 text-xs font-bold transition shadow-sm"
+        >
+          <Upload size={14} />
+          <span>Import Products</span>
+        </button>
+
+        <button
+          onClick={handleExportAll}
+          className="flex items-center gap-1.5 h-9 px-4 rounded-xl border border-emerald-200 bg-emerald-50/15 hover:bg-emerald-50/60 text-emerald-600 text-xs font-bold transition shadow-sm"
+        >
+          <Download size={14} />
+          <span>Export Products</span>
+        </button>
+
+        <button
+          onClick={handleDownloadTemplateXlsx}
+          className="flex items-center gap-1.5 h-9 px-4 rounded-xl border border-purple-200 bg-purple-50/15 hover:bg-purple-50/60 text-purple-600 text-xs font-bold transition shadow-sm"
+        >
+          <FileText size={14} />
+          <span>Download Template</span>
+        </button>
+      </div>
+
+      {/* Stats Cards Row */}
+      <ProductStatCards stats={stats} isLoading={isStatsLoading} />
+
+      {/* Filters & Actions Toolbar */}
+      <ProductToolbar
+        category={category}
+        status={status}
+        stockStatus={stockStatus}
+        categories={categories}
+        onCategoryChange={setCategory}
+        onStatusChange={setStatus}
+        onStockStatusChange={(val) => setStockStatus(val as "all" | "in_stock" | "low_stock" | "out_of_stock")}
         exportMenu={
           <ExportProductDropdown
             products={products}
@@ -211,16 +304,6 @@ const ProductsPage = () => {
             categories={categories}
           />
         }
-      />
-
-      <ProductToolbar
-        search={search}
-        category={category}
-        status={status}
-        categories={categories}
-        onSearchChange={setSearch}
-        onCategoryChange={setCategory}
-        onStatusChange={setStatus}
       />
 
       <AnimatePresence mode="wait">

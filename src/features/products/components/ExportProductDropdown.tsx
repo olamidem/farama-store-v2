@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { Download, FileSpreadsheet, FileText, ChevronDown } from "lucide-react";
-import Button from "../../../components/ui/Button";
 import type { Product } from "../types/product";
 import type { Category } from "../../categories/types/category";
 import { useProductExport } from "../hooks/useProductExport";
@@ -50,18 +49,17 @@ export const ExportProductDropdown = ({
       ref={menuRef}
       id="export-products-dropdown"
     >
-      <Button
-        variant="secondary"
+      <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-1.5"
+        className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm"
       >
-        <Download size={18} />
-        <span>Export / Templates</span>
+        <Download size={14} className="text-slate-500" />
+        <span>Export</span>
         <ChevronDown
-          size={14}
-          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          size={12}
+          className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
-      </Button>
+      </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-72 rounded-lg bg-white shadow-xl ring-1 ring-black/5 divide-y divide-slate-100 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
