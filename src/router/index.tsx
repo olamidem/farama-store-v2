@@ -10,6 +10,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import LoginScreen from "../pages/Login/LoginScreen";
 import ProductsPage from "../pages/ProductsPage";
 import CategoryPage from "../pages/CategoryPage";
+import ProductDetailsPage from "../features/products/details/ProductDetailsPage";
 
 const rootRoute = createRootRoute();
 const loginRoute = createRoute({
@@ -44,12 +45,22 @@ const CategoryRoute = createRoute({
   path: "/categories",
   component: CategoryPage,
 });
+const productDetailsRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/products/$productId",
+  component: ProductDetailsPage,
+});
 /**
  * Route Tree
  */
 const routeTree = rootRoute.addChildren([
   loginRoute,
-  appLayoutRoute.addChildren([dashboardRoute, productsRoute, CategoryRoute]),
+  appLayoutRoute.addChildren([
+    dashboardRoute,
+    productsRoute,
+    CategoryRoute,
+    productDetailsRoute,
+  ]),
 ]);
 
 /**
