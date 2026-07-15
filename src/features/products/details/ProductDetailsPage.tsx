@@ -12,6 +12,8 @@ import DeleteProductModal from "../components/DeleteProductModal";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { ProductDetailsActivity } from "./components/ProductDetailsActivity";
+import { ProductDetailsActivity } from "./components/ProductDetailsActivity";
 
 export const ProductDetailsPage = () => {
   const { productId } = useParams({ strict: false }) as { productId: string };
