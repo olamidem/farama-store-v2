@@ -4,6 +4,7 @@ export interface PaginationParams {
   search?: string;
   category?: string;
   status?: "all" | "active" | "inactive";
+  stockStatus?: "all" | "in_stock" | "low_stock" | "out_of_stock";
   sortBy?: "name" | "selling_price" | "stock" | "created_at";
   ascending?: boolean;
 }
