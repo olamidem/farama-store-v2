@@ -1,51 +1,49 @@
-import DataTableToolbar from "../../../components/ui/DataTable/DataTableToolbar";
-import Input from "../../../components/ui/Input";
+import React from "react";
+import { Download, ChevronDown } from "lucide-react";
 import Select from "../../../components/ui/Select";
 import type { Category } from "../../categories/types/category";
 
 interface ProductToolbarProps {
-  search: string;
   category: string;
   status: string;
-  onSearchChange: (value: string) => void;
+  stockStatus: string;
   onCategoryChange: (value: string) => void;
   onStatusChange: (value: string) => void;
+  onStockStatusChange: (value: string) => void;
   categories: Category[];
+  exportMenu?: React.ReactNode;
 }
 
 const ProductToolbar = ({
-  search,
   category,
   status,
-  onSearchChange,
+  stockStatus,
   onCategoryChange,
   onStatusChange,
+  onStockStatusChange,
   categories,
+  exportMenu,
 }: ProductToolbarProps) => {
   return (
-    <DataTableToolbar
-      left={
-        <Input
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
-      }
-      right={
-        <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
+      {/* Left Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="w-48">
           <Select
+            placeholder="All Categories"
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
-            options={[
-              { label: "All Categories", value: "" },
-              ...categories.map((category) => ({
-                label: category.name,
-                value: category.id,
-              })),
-            ]}
+            options={categories.map((category) => ({
+              label: category.name,
+              value: category.id,
+            }))}
+            className="h-9 text-xs"
           />
+        </div>
 
+        <div className="w-36">
           <Select
+            placeholder=""
             value={status}
             onChange={(e) => onStatusChange(e.target.value)}
             options={[
@@ -53,10 +51,37 @@ const ProductToolbar = ({
               { label: "Active", value: "active" },
               { label: "Inactive", value: "inactive" },
             ]}
+            className="h-9 text-xs"
           />
         </div>
-      }
-    />
+
+        <div className="w-40">
+          <Select
+            placeholder=""
+            value={stockStatus}
+            onChange={(e) => onStockStatusChange(e.target.value)}
+            options={[
+              { label: "Stock Status", value: "all" },
+              { label: "In Stock", value: "in_stock" },
+              { label: "Low Stock", value: "low_stock" },
+              { label: "Out of Stock", value: "out_of_stock" },
+            ]}
+            className="h-9 text-xs"
+          />
+        </div>
+      </div>
+
+      {/* Right Actions */}
+      <div className="flex items-center gap-2 self-end md:self-auto">
+        {exportMenu || (
+          <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm">
+            <Download size={14} className="text-slate-500" />
+            <span>Export</span>
+            <ChevronDown size={12} className="text-slate-400" />
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
