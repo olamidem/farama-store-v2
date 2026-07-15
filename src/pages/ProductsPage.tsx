@@ -22,7 +22,6 @@ import {
 import { useCategories } from "../features/categories/hooks/useCategories";
 import type { Product } from "../features/products/types/product";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
-import { useProductExport } from "../features/products/hooks/useProductExport";
 import {
   Plus,
   Bell,
@@ -31,6 +30,7 @@ import {
   Download,
   FileText,
 } from "lucide-react";
+import { useProductExport } from "../features/products/hooks/useProductExport";
 import ProductStatCards from "../features/products/components/ProductStartCards";
 
 const ProductsPage = () => {
