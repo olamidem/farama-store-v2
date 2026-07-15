@@ -1,5 +1,5 @@
 import { Pencil, Sliders, Copy, Barcode, Trash2, Plus } from "lucide-react";
-import type { Product } from "../types/product";
+import type { Product } from "../../types/product";
 
 interface ProductDetailsOverviewTabProps {
   product: Product;

@@ -1,6 +1,6 @@
 import { Tag, Landmark, TrendingUp, Package } from "lucide-react";
-import type { Product } from "../types/product";
-import { formatCurrency } from "../../../utils/formatCurrenty";
+import type { Product } from "../../types/product";
+import { formatCurrency } from "../../../../utils/formatCurrenty";
 
 interface ProductDetailsPricingCardProps {
   product: Product;

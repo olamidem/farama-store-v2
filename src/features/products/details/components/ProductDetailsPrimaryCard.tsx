@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
-import type { Product } from "../types/product";
+import type { Product } from "../../types/product";
 
 interface ProductDetailsPrimaryCardProps {
   product: Product;
