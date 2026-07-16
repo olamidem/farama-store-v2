@@ -26,7 +26,6 @@ export const createProduct = async (
     .select()
     .single();
   throwSupabaseError(error);
-
    try {
      await createDefaultProductUnit(data);
      return data;
