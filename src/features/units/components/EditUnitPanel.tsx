@@ -66,7 +66,7 @@ export const EditUnitPanel = ({ open, onClose, unit }: EditUnitPanelProps) => {
                 defaultValues={{
                   name: unit.name,
                   symbol: unit.symbol,
-                  description: unit.description,
+                   description: unit.description ?? undefined,
                   is_active: unit.is_active,
                 }}
                 submitLabel="Save Changes"
