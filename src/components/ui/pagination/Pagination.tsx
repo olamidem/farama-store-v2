@@ -6,6 +6,7 @@ interface PaginationProps {
   totalItems: number;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  itemName?: string;
 }
 
 const Pagination = ({
@@ -14,6 +15,7 @@ const Pagination = ({
   totalItems,
   onPageChange,
   onPageSizeChange,
+  itemName = "products",
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -81,7 +83,7 @@ const Pagination = ({
           <span className="font-semibold text-slate-800">{startRecord}</span> –
           <span className="font-semibold text-slate-800">{endRecord}</span> of{" "}
           <span className="font-semibold text-slate-800">{totalItems}</span>{" "}
-          products
+          {itemName}
         </p>
       </div>
 

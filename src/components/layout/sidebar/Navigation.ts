@@ -8,6 +8,7 @@ import {
   Settings,
   ShoppingCart,
   Tags,
+  Scale,
   Users,
   UserCog,
 } from "lucide-react";
@@ -56,6 +57,11 @@ export const navigation = [
         label: "Customers",
         to: "/customers",
         icon: Users,
+      },
+      {
+        label: "Units",
+        to: "/units",
+        icon: Scale,
       },
       {
         label: "Staff",
