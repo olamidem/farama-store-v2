@@ -19,6 +19,7 @@ export const createUnitSchema = z.object({
     .max(255, "Description cannot exceed 255 characters.")
     .optional()
     .or(z.literal("")),
+  is_active: z.boolean(),
 });
 
 export type UnitFormData = z.infer<typeof createUnitSchema>;
