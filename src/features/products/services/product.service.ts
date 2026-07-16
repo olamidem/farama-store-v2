@@ -27,8 +27,14 @@ export const createProduct = async (
     .single();
   throwSupabaseError(error);
 
-  await createDefaultProductUnit(data);
-  return data;
+   try {
+     await createDefaultProductUnit(data);
+     return data;
+   } catch (error) {
+     await supabase.from("products").delete().eq("id", data.id);
+
+     throw error;
+   }
 };
 
 export const getProducts = async ({
