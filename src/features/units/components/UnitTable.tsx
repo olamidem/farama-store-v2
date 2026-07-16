@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Unit } from "../types/unit";
 import Badge from "../../../components/ui/Badge";
@@ -12,6 +13,7 @@ import {
   Lock,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useProductsForUnits } from "../hooks/useUnits";
 
 interface UnitTableProps {
   units: Unit[];
@@ -44,6 +46,56 @@ export const UnitTable = ({
   ascending,
   onSort,
 }: UnitTableProps) => {
+  const { data: products = [] } = useProductsForUnits();
+
+  // Match and count products for each unit based on symbol or name
+  const productCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    units.forEach((u) => {
+      counts[u.id] = 0;
+    });
+
+    const pieceUnit = units.find(
+      (u) =>
+        u.symbol.toLowerCase() === "pcs" || u.name.toLowerCase() === "piece",
+    );
+
+    products.forEach((product) => {
+      let matchedUnit: Unit | undefined;
+      for (const unit of units) {
+        const nameLower = product.name.toLowerCase();
+        const descLower = (product.description || "").toLowerCase();
+        const symbolLower = unit.symbol.toLowerCase();
+        const unitNameLower = unit.name.toLowerCase();
+
+        // Check if the symbol or name is explicitly mentioned in product name or description
+        const symbolRegex = new RegExp(`\\b${symbolLower}\\b`, "i");
+        const nameRegex = new RegExp(`\\b${unitNameLower}\\b`, "i");
+        const numberSymbolRegex = new RegExp(`\\d+${symbolLower}\\b`, "i");
+
+        if (
+          symbolRegex.test(nameLower) ||
+          symbolRegex.test(descLower) ||
+          nameRegex.test(nameLower) ||
+          nameRegex.test(descLower) ||
+          numberSymbolRegex.test(nameLower) ||
+          numberSymbolRegex.test(descLower)
+        ) {
+          matchedUnit = unit;
+          break; // Found matching unit
+        }
+      }
+
+      if (matchedUnit) {
+        counts[matchedUnit.id] = (counts[matchedUnit.id] || 0) + 1;
+      } else if (pieceUnit) {
+        counts[pieceUnit.id] = (counts[pieceUnit.id] || 0) + 1;
+      }
+    });
+
+    return counts;
+  }, [units, products]);
+
   const columns: ColumnDef<Unit>[] = [
     {
       accessorKey: "name",
@@ -112,6 +164,22 @@ export const UnitTable = ({
           {row.original.description || "-"}
         </span>
       ),
+    },
+    {
+      id: "products_count",
+      header: "Products",
+      cell: ({ row }) => {
+        const count = productCounts[row.original.id] || 0;
+        return (
+          <Badge
+            variant={count > 0 ? "info" : "default"}
+            size="sm"
+            className={count > 0 ? "font-bold" : "text-slate-400 font-normal"}
+          >
+            {count} {count === 1 ? "product" : "products"}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "is_system",
