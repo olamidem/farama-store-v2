@@ -5,7 +5,7 @@ import type { Product } from "../types/product";
 import { selectionColumn } from "../../../components/ui/DataTable/SelectionColumn";
 import SortableHeader from "../../../components/ui/DataTable/SortableHeader";
 import { ProductAvatar } from "./ProductAvatar";
-import { Eye, Pencil, Trash2, RotateCcw } from "lucide-react";
+import { Eye, Pencil, Archive, RotateCcw } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatCurrency } from "../../../utils/formatCurrenty";
 
@@ -187,7 +187,7 @@ export const productColumns = ({
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition duration-150"
               title="Deactivate Product"
             >
-              <Trash2 size={14} />
+              <Archive size={14} />
             </button>
           </div>
         );

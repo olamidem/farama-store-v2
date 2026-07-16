@@ -62,7 +62,7 @@ const DataTable = <T,>({
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="max-h-[600px] overflow-y-auto overflow-x-auto">
+      <div className="max-h-150 overflow-y-auto overflow-x-auto">
         <table className="min-w-full border-separate border-spacing-0">
           <thead className="sticky top-0 z-10 bg-slate-50">
             {table.getHeaderGroups().map((headerGroup) => (
