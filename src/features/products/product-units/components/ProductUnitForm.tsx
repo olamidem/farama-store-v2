@@ -10,24 +10,20 @@ import {
   type ProductUnitFormData,
 } from "../validation/productUnit.schema";
 import Button from "../../../../components/ui/Button";
-import {
-  FormInput,
-  FormNumberInput,
-  FormSelect,
-} from "../../../../components/forms";
-import FormCurrencyInput from "../../../../components/forms/FormCurrencyInput";
-import ProductUnitPreview from "./ProductUnitPreview";
+import Input from "../../../../components/ui/Input";
+import Label from "../../../../components/ui/Label";
+import Select from "../../../../components/ui/Select";
+import { ProductUnitPreview } from "./ProductUnitPreview";
+import { generateBarcode } from "../../utils/generateBarcode";
 
 interface ProductUnitsFormProps {
   product: Product;
   generalUnits: Unit[];
   editingUnit: ProductUnit | null;
-  onSubmit: (
-    productId: string,
-    data: ProductUnitFormData
-) => Promise<void>;
+  onSubmit: (data: ProductUnitFormData) => Promise<void>;
   onCancel: () => void;
   isPending: boolean;
+  formatCurrency: (value: number) => string;
 }
 
 export const ProductUnitsForm = ({
@@ -37,172 +33,298 @@ export const ProductUnitsForm = ({
   onSubmit,
   onCancel,
   isPending,
+  formatCurrency,
 }: ProductUnitsFormProps) => {
-  const { control, handleSubmit, reset, setValue, watch } =
-    useForm<ProductUnitFormData>({
-      resolver: zodResolver(createProductUnitSchema),
-      defaultValues: {
-        unit_id: "",
-        conversion_factor: 1,
-        selling_price: 0,
-        cost_price: 0,
-        sku: "",
-        barcode: "",
-      },
-    });
-
-  const watchedUnitId = watch("unit_id");
-  const watchedConversion = watch("conversion_factor") || 1;
-
-  const selectedUnit = useMemo(() => {
-    return generalUnits.find((unit) => unit.id === watchedUnitId);
-  }, [generalUnits, watchedUnitId]);
-
-  const activeUnits = generalUnits.filter((unit) => unit.is_active);
-  const handleAutoSuggest = () => {
-  const factor = Number(watchedConversion) || 1;
-
-  setValue("cost_price", product.cost_price * factor);
-
-  setValue("selling_price", product.selling_price * factor);
-
-    if (selectedUnit) {
-      setValue("sku", `${product.sku}-${selectedUnit.symbol.toUpperCase()}`);
-    }
-  };
-
-  useEffect(() => {
-    if (editingUnit) {
-      reset({
-        unit_id: editingUnit.unit_id,
-        conversion_factor: editingUnit.conversion_factor,
-        selling_price: editingUnit.selling_price,
-        cost_price: editingUnit.cost_price,
-        sku: editingUnit.sku,
-        barcode: editingUnit.barcode || "",
-      });
-
-      return;
-    }
-
-    reset({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ProductUnitFormData>({
+    resolver: zodResolver(createProductUnitSchema),
+    defaultValues: {
+      product_id: product.id,
       unit_id: "",
       conversion_factor: 1,
       selling_price: 0,
       cost_price: 0,
       sku: "",
       barcode: "",
-    });
+      is_active: true,
+    },
+  });
+
+  const watchedUnitId = watch("unit_id");
+  const watchedConversion = watch("conversion_factor") || 1;
+  const watchedSellingPrice = watch("selling_price") || 0;
+  const watchedCostPrice = watch("cost_price") || 0;
+
+  // Selected unit details
+  const selectedUnit = useMemo(() => {
+    return generalUnits.find((u) => u.id === watchedUnitId);
+  }, [generalUnits, watchedUnitId]);
+
+  // Suggest pricing & SKU
+  const handleAutoSuggest = () => {
+    const factor = Number(watchedConversion) || 1;
+    const suggestedCost = product.cost_price * factor;
+    const suggestedSelling = product.selling_price * factor;
+
+    setValue("cost_price", suggestedCost);
+    setValue("selling_price", suggestedSelling);
+
+    if (selectedUnit) {
+      const suggestedSku = `${product.sku}-${selectedUnit.symbol.toUpperCase()}`;
+      setValue("sku", suggestedSku);
+    }
+  };
+
+  useEffect(() => {
+    if (editingUnit) {
+      reset({
+        product_id: editingUnit.product_id,
+        unit_id: editingUnit.unit_id,
+        conversion_factor: editingUnit.conversion_factor,
+        selling_price: editingUnit.selling_price,
+        cost_price: editingUnit.cost_price,
+        sku: editingUnit.sku,
+        barcode: editingUnit.barcode || "",
+        is_active: editingUnit.is_active,
+      });
+    } else {
+      reset({
+        product_id: product.id,
+        unit_id: "",
+        conversion_factor: 1,
+        selling_price: 0,
+        cost_price: 0,
+        sku: "",
+        barcode: "",
+        is_active: true,
+      });
+    }
   }, [editingUnit, product.id, reset]);
+
+  const activeUnits = generalUnits.filter((u) => u.is_active);
+
+  const selectOptions = useMemo(() => {
+    return activeUnits.map((u) => ({
+      value: u.id,
+      label: `${u.name} (${u.symbol})`,
+    }));
+  }, [activeUnits]);
+
   return (
     <form
-      onSubmit={handleSubmit((data) =>
-        onSubmit(product.id, data),
-      )}
-      className="p-5 border border-blue-100 bg-blue-50/20 rounded-2xl space-y-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
+      id="product-unit-form"
+      onSubmit={handleSubmit(onSubmit)}
+      className="p-5 border border-blue-100 bg-blue-50/20 rounded-2xl space-y-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-blue-100 pb-3">
-        <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-800">
-          <Sparkles className="h-4 w-4 text-blue-500" />
+      <div className="flex items-center justify-between border-b border-blue-50 pb-2.5">
+        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+          <Sparkles className="h-4 w-4 text-blue-500 animate-pulse" />
           {editingUnit ? "Edit Selling Unit" : "New Selling Unit Configuration"}
         </h4>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleAutoSuggest}
-          disabled={!selectedUnit}
-          className="flex items-center gap-2"
-        >
-          <Calculator className="h-4 w-4" />
-          Auto Calculate
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <button
+            id="auto-suggest-btn"
+            type="button"
+            onClick={handleAutoSuggest}
+            disabled={!watchedUnitId}
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold bg-white text-blue-600 border border-blue-200 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed select-none transition-colors cursor-pointer"
+            title="Automatically calculate prices based on conversion factor and base product price"
+          >
+            <Calculator size={12} />
+            <span>Auto-Calculate Pricing & SKU</span>
+          </button>
+        </div>
       </div>
 
-      {/* First Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormSelect
-          control={control}
-          name="unit_id"
-          label="Selling Unit Of Measure"
-          placeholder="Select unit..."
-          options={activeUnits.map((unit) => ({
-            label: `${unit.name} (${unit.symbol})`,
-            value: unit.id,
-          }))}
-        />
+        {/* Unit Selection */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Selling Unit Of Measure
+          </Label>
+          <Select
+            {...register("unit_id")}
+            id="unit_id_select"
+            placeholder="Select unit..."
+            options={selectOptions}
+            className="w-full h-10 px-3 text-sm font-medium text-slate-800"
+          />
+          {errors.unit_id && (
+            <p className="text-xs text-red-500 mt-0.5">
+              {errors.unit_id.message}
+            </p>
+          )}
+        </div>
 
-        <FormNumberInput
-          control={control}
-          name="conversion_factor"
-          label="Conversion Factor"
-          placeholder="12"
-          suffix={selectedUnit?.symbol}
-        />
+        {/* Conversion Factor */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Conversion Factor
+          </Label>
+          <div className="relative">
+            <Input
+              id="conversion_factor_input"
+              type="number"
+              step="any"
+              {...register("conversion_factor", { valueAsNumber: true })}
+              placeholder="e.g. 12"
+              className="w-full pr-10 font-mono"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+              {selectedUnit ? selectedUnit.symbol : "pcs"}
+            </span>
+          </div>
+          {errors.conversion_factor && (
+            <p className="text-xs text-red-500 mt-0.5">
+              {errors.conversion_factor.message}
+            </p>
+          )}
+        </div>
 
-        <FormInput
-          control={control}
-          name="sku"
-          label="Selling Unit SKU"
-          placeholder="BEV-COKE-CTN"
-          className="font-mono uppercase"
-        />
+        {/* SKU */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Selling Unit SKU
+          </Label>
+          <Input
+            id="sku_input"
+            type="text"
+            {...register("sku")}
+            placeholder="e.g. BEV-COK-CTN"
+            className="w-full font-mono uppercase"
+          />
+          {errors.sku && (
+            <p className="text-xs text-red-500 mt-0.5">{errors.sku.message}</p>
+          )}
+        </div>
       </div>
 
-      {/* Second Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormCurrencyInput
-          control={control}
-          name="cost_price"
-          label="Cost Price"
-          placeholder="0.00"
-        />
+        {/* Cost Price */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Cost Price
+          </Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+              ₦
+            </span>
+            <Input
+              id="cost_price_input"
+              type="number"
+              step="any"
+              {...register("cost_price", { valueAsNumber: true })}
+              placeholder="0.00"
+              className="w-full pl-7 font-mono"
+            />
+          </div>
+          {errors.cost_price && (
+            <p className="text-xs text-red-500 mt-0.5">
+              {errors.cost_price.message}
+            </p>
+          )}
+        </div>
 
-        <FormCurrencyInput
-          control={control}
-          name="selling_price"
-          label="Selling Price"
-          placeholder="0.00"
-        />
+        {/* Selling Price */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Selling Price
+          </Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+              ₦
+            </span>
+            <Input
+              id="selling_price_input"
+              type="number"
+              step="any"
+              {...register("selling_price", { valueAsNumber: true })}
+              placeholder="0.00"
+              className="w-full pl-7 font-mono"
+            />
+          </div>
+          {errors.selling_price && (
+            <p className="text-xs text-red-500 mt-0.5">
+              {errors.selling_price.message}
+            </p>
+          )}
+        </div>
 
-        <FormInput
-          control={control}
-          name="barcode"
-          label="Barcode (Optional)"
-          placeholder="615110001"
-          icon={<Barcode className="h-4 w-4" />}
-          className="font-mono"
-        />
+        {/* Barcode */}
+        <div className="space-y-1">
+          <Label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Barcode (Optional)
+          </Label>
+          <div className="relative">
+            <Input
+              id="barcode_input"
+              type="text"
+              {...register("barcode")}
+              placeholder="e.g. 615110001"
+              className="w-full pr-28 font-mono"
+            />
+            <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button
+                type="button"
+                id="generate-barcode-btn"
+                onClick={() => {
+                  const generated = generateBarcode();
+                  setValue("barcode", generated);
+                }}
+                className="px-2 py-1 text-[10px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-200 transition-colors bg-white flex items-center gap-1 shadow-xs cursor-pointer"
+              >
+                <Sparkles className="h-3 w-3 text-blue-500 animate-pulse" />
+                <span>Generate</span>
+              </button>
+              <Barcode className="h-4 w-4 text-slate-400 mr-2" />
+            </div>
+          </div>
+          {errors.barcode && (
+            <p className="text-xs text-red-500 mt-0.5">
+              {errors.barcode.message}
+            </p>
+          )}
+        </div>
       </div>
 
-      <ProductUnitSummary
-    product={product}
-    baseUnit={baseUnit}
-    selectedUnit={selectedUnit}
-    conversionFactor={watchedConversion}
-    costPrice={watchedCostPrice}
-    sellingPrice={watchedSellingPrice}
-/>
-
-      {/* Preview */}
+      {/* Dynamic Factor Calculation Preview */}
       {selectedUnit && (
         <ProductUnitPreview
-          sku={watch("sku") ?? ""}
-          barcode={watch("barcode") ?? ""}
-        
+          product={product}
+          generalUnits={generalUnits}
+          selectedUnitName={selectedUnit.name}
+          selectedUnitSymbol={selectedUnit.symbol}
+          watchedConversion={watchedConversion}
+          watchedSellingPrice={watchedSellingPrice}
+          watchedCostPrice={watchedCostPrice}
+          formatCurrency={formatCurrency}
         />
       )}
 
-      {/* Footer */}
-      <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
-        <Button type="button" variant="secondary" onClick={onCancel}>
+      {/* Action buttons */}
+      <div className="flex justify-end items-center gap-3 border-t border-slate-100 pt-3">
+        <button
+          id="cancel-unit-form-btn"
+          type="button"
+          onClick={onCancel}
+          className="px-4 h-9 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition"
+        >
           Cancel
-        </Button>
-
-        <Button type="submit" loading={isPending}>
-          {editingUnit ? "Save Changes" : "Create Selling Unit"}
+        </button>
+        <Button
+          id="submit-unit-form-btn"
+          type="submit"
+          size="sm"
+          loading={isPending}
+          className="flex items-center gap-1 font-semibold"
+        >
+          <span>{editingUnit ? "Save Changes" : "Create Selling Unit"}</span>
         </Button>
       </div>
     </form>

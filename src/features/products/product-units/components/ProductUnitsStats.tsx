@@ -1,116 +1,130 @@
-import { Boxes, Layers, TrendingUp, PackageCheck } from "lucide-react";
-import { useProductUnits } from "../hooks/useProductUnits";
-import { useUnits } from "../../../units/hooks/useUnits";
+import { useMemo } from "react";
+import { Boxes, Scale, TrendingUp, CheckCircle2 } from "lucide-react";
+import type { ProductUnit } from "../types/productUnit";
 import type { Product } from "../../types/product";
-
+import type { Unit } from "../../../units/types/unit";
 
 interface ProductUnitsStatsProps {
+  productUnits: ProductUnit[];
   product: Product;
+  generalUnits: Unit[];
 }
 
-export default function ProductUnitsStats({ product }: ProductUnitsStatsProps) {
-  const { data: productUnits = [] } = useProductUnits(product.id);
-  const { data: units = [] } = useUnits();
+export const ProductUnitsStats = ({
+  productUnits,
+  product,
+  generalUnits,
+}: ProductUnitsStatsProps) => {
+  const baseUnit = useMemo(() => {
+    return generalUnits.find((u) => u.id === product.base_unit_id);
+  }, [generalUnits, product.base_unit_id]);
 
-  const totalUnits = productUnits.length;
+  const baseUnitDisplay = baseUnit
+    ? `${baseUnit.name} (${baseUnit.symbol})`
+    : "Piece (pcs)";
 
-  const largestPack =
-    productUnits.length > 0
-      ? productUnits.reduce((largest, current) =>
-          current.conversion_factor > largest.conversion_factor
-            ? current
-            : largest,
-        )
-      : null;
+  const stats = useMemo(() => {
+    if (productUnits.length === 0) {
+      return {
+        count: 0,
+        avgMargin: 0,
+        status: "Active",
+      };
+    }
 
-  const averageMargin =
-    productUnits.length > 0
-      ? productUnits.reduce((sum, unit) => {
-          const margin =
-            unit.selling_price > 0
-              ? ((unit.selling_price - unit.cost_price) / unit.selling_price) *
-                100
-              : 0;
+    let totalMargin = 0;
+    productUnits.forEach((pu) => {
+      const profit = pu.selling_price - pu.cost_price;
+      const margin =
+        pu.selling_price > 0 ? (profit / pu.selling_price) * 100 : 0;
+      totalMargin += margin;
+    });
 
-          return sum + margin;
-        }, 0) / productUnits.length
-      : 0;
+    const avgMargin = totalMargin / productUnits.length;
 
-  const equivalentPackStock = largestPack
-    ? Math.floor(product.stock / largestPack.conversion_factor)
-    : 0;
-
-  const largestPackName =
-    units.find((u) => u.id === largestPack?.unit_id)?.name ?? "--";
-
-  const cards = [
-    {
-      title: "Selling Units",
-      value: totalUnits,
-      icon: Boxes,
-      color: "emerald",
-    },
-    {
-      title: "Largest Pack",
-      value: largestPack
-        ? `${largestPackName} × ${largestPack.conversion_factor}`
-        : "--",
-      icon: Layers,
-      color: "blue",
-    },
-    {
-      title: "Average Margin",
-      value: `${averageMargin.toFixed(1)}%`,
-      icon: TrendingUp,
-      color: "amber",
-    },
-    {
-      title: "Pack Stock",
-      value: largestPack ? `${equivalentPackStock} ${largestPackName}` : "--",
-      icon: PackageCheck,
-      color: "violet",
-    },
-  ];
+    return {
+      count: productUnits.length,
+      avgMargin,
+      status: "Active",
+    };
+  }, [productUnits]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-      {cards.map((card) => {
-        const Icon = card.icon;
+    <div
+      id="product-units-stats-container"
+      className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+    >
+      {/* Base Unit Card */}
+      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200 flex items-center gap-3 shadow-sm">
+        <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 shrink-0">
+          <Scale className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Base Unit
+          </p>
+          <p className="text-sm font-extrabold text-slate-800 leading-none mt-1">
+            {baseUnitDisplay}
+          </p>
+          <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+            Primary unit of measure
+          </p>
+        </div>
+      </div>
 
-        return (
-          <div
-            key={card.title}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  {card.title}
-                </p>
+      {/* Total Variants Card */}
+      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200 flex items-center gap-3 shadow-sm">
+        <div className="p-2.5 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+          <Boxes className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Total Variants
+          </p>
+          <p className="text-sm font-extrabold text-slate-800 leading-none mt-1">
+            {stats.count}
+          </p>
+          <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+            Selling unit variants
+          </p>
+        </div>
+      </div>
 
-                <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                  {card.value}
-                </h3>
-              </div>
+      {/* Average Margin Card */}
+      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200 flex items-center gap-3 shadow-sm">
+        <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+          <TrendingUp className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Average Margin
+          </p>
+          <p className="text-sm font-extrabold text-emerald-600 leading-none mt-1">
+            {stats.avgMargin.toFixed(1)}%
+          </p>
+          <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+            Across all variants
+          </p>
+        </div>
+      </div>
 
-              <div
-                className={`h-11 w-11 rounded-xl flex items-center justify-center
-                ${
-                  card.color === "emerald"
-                    ? "bg-emerald-50 text-emerald-600"
-                    : card.color === "blue"
-                      ? "bg-blue-50 text-blue-600"
-                      : card.color === "amber"
-                        ? "bg-amber-50 text-amber-600"
-                        : "bg-violet-50 text-violet-600"
-                }`}
-              >
-                <Icon size={20} />
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      {/* Status Card */}
+      <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200 flex items-center gap-3 shadow-sm">
+        <div className="p-2.5 rounded-lg bg-teal-50 text-teal-600 shrink-0">
+          <CheckCircle2 className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Status
+          </p>
+          <p className="text-sm font-extrabold text-teal-700 leading-none mt-1">
+            {stats.status}
+          </p>
+          <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+            All variants active
+          </p>
+        </div>
+      </div>
     </div>
   );
-}
+};
