@@ -4,7 +4,7 @@ import { ProductDetailsOverviewTab } from "./ProductDetailsOverviewTab";
 import { ProductDetailsStockSummary } from "./ProductDetailsStockSummary";
 import { ProductDetailsActivity } from "./ProductDetailsActivity";
 import { Plus, ArrowUpRight, ArrowDownLeft } from "lucide-react";
-import ProductUnitsManager from "../../product-units/components/ProductUnitsManager";
+import { ProductUnitsManager } from "../../product-units/components/ProductUnitsManager";
 
 interface ProductDetailsHistoryTabsProps {
   product: Product;

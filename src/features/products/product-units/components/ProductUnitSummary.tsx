@@ -7,14 +7,19 @@ interface ProductUnitSummaryProps {
   generalUnits: Unit[];
 }
 
-export const ProductUnitSummary = ({ productUnits, generalUnits }: ProductUnitSummaryProps) => {
-  const activeUnits = productUnits.filter(pu => pu.is_active);
+export const ProductUnitSummary = ({
+  productUnits,
+  generalUnits,
+}: ProductUnitSummaryProps) => {
+  const activeUnits = productUnits.filter((pu) => pu.is_active);
 
   if (activeUnits.length === 0) {
     return (
       <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-100 flex items-center gap-2 text-slate-500 text-xs">
         <Scale className="h-4 w-4 text-slate-400" />
-        <span>No extra selling units configured. Selling only in base units.</span>
+        <span>
+          No extra selling units configured. Selling only in base units.
+        </span>
       </div>
     );
   }
@@ -26,8 +31,8 @@ export const ProductUnitSummary = ({ productUnits, generalUnits }: ProductUnitSu
         Configured Selling Units
       </h4>
       <div className="flex flex-wrap gap-1.5">
-        {activeUnits.map(pu => {
-          const unit = generalUnits.find(u => u.id === pu.unit_id);
+        {activeUnits.map((pu) => {
+          const unit = generalUnits.find((u) => u.id === pu.unit_id);
           const name = unit ? `${unit.name} (${unit.symbol})` : "Pack";
           return (
             <span

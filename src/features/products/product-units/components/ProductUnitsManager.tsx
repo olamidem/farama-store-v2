@@ -17,7 +17,7 @@ import { ProductUnitsStats } from "./ProductUnitsStats";
 import { ProductUnitsForm } from "./ProductUnitForm";
 import Modal from "../../../../components/ui/Modal";
 import ProductInitEmptyState from "./ProductInitEmptyState";
-import ProductUnitsTable from "./ProductUntsTable";
+import { ProductUnitsTable } from "./ProductUnitsTable";
 
 interface ProductUnitsManagerProps {
   product: Product;
