@@ -4,16 +4,12 @@ import { useProduct } from "../hooks/useProducts";
 import { useCategories } from "../../categories/hooks/useCategories";
 import { ProductDetailsHeader } from "./components/ProductDetailsHeader";
 import { ProductDetailsPrimaryCard } from "./components/ProductDetailsPrimaryCard";
-import { ProductDetailsPricingCard } from "./components/ProductDetailsPricingCard";
 import { ProductDetailsHistoryTabs } from "./components/ProductDetailsHistoryTabs";
-import { ProductDetailsStockSummary } from "./components/ProductDetailsStockSummary";
 import EditProductModal from "../components/EditProductModal";
 import DeleteProductModal from "../components/DeleteProductModal";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
-import { ProductDetailsActivity } from "./components/ProductDetailsActivity";
-import ProductUnitsManager from "../product-units/components/ProductUnitsManager";
 
 export const ProductDetailsPage = () => {
   const { productId } = useParams({ strict: false }) as { productId: string };
@@ -33,7 +29,7 @@ export const ProductDetailsPage = () => {
 
   if (isProductLoading) {
     return (
-      <div className="space-y-6 animate-pulse max-w-7xl mx-auto">
+      <div className="space-y-6 animate-pulse w-full">
         <div className="h-10 bg-slate-200 rounded-xl w-1/4" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -98,7 +94,7 @@ export const ProductDetailsPage = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 max-w-7xl mx-auto pb-12"
+      className="space-y-6 w-full pb-12"
     >
       {/* Header */}
       <ProductDetailsHeader
@@ -107,33 +103,22 @@ export const ProductDetailsPage = () => {
         onArchive={() => setIsArchiveOpen(true)}
       />
 
-      {/* Main Grid Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left Side: Product Cards */}
-        <div className="lg:col-span-2 space-y-6">
-          <ProductDetailsPrimaryCard
-            product={product}
-            categoryName={categoryName}
-          />
-          <ProductUnitsManager product={product} />
-          <ProductDetailsHistoryTabs
-            product={product}
-            categoryName={categoryName}
-            onEdit={() => setIsEditOpen(true)}
-            onAdjustStock={handleAdjustStock}
-            onDuplicate={handleDuplicate}
-            onPrintBarcode={handlePrintBarcode}
-            onArchive={() => setIsArchiveOpen(true)}
-          />
-        </div>
+      {/* Top Card: Full width Primary Card containing details, pricing and stock financials */}
+      <ProductDetailsPrimaryCard
+        product={product}
+        categoryName={categoryName}
+      />
 
-        {/* Right Side: Pricing & Activity Panels */}
-        <div className="space-y-6">
-          <ProductDetailsPricingCard product={product} />
-          <ProductDetailsStockSummary product={product} />
-          <ProductDetailsActivity product={product} />
-        </div>
-      </div>
+      {/* Bottom Tabs Card: Full width History and details tabs */}
+      <ProductDetailsHistoryTabs
+        product={product}
+        categoryName={categoryName}
+        onEdit={() => setIsEditOpen(true)}
+        onAdjustStock={handleAdjustStock}
+        onDuplicate={handleDuplicate}
+        onPrintBarcode={handlePrintBarcode}
+        onArchive={() => setIsArchiveOpen(true)}
+      />
 
       {/* Edit Product Modal */}
       <EditProductModal
