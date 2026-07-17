@@ -12,6 +12,7 @@ import ProductsPage from "../pages/ProductsPage";
 import CategoryPage from "../pages/CategoryPage";
 import UnitsPage from "../pages/UnitsPage";
 import ProductDetailsPage from "../features/products/details/ProductDetailsPage";
+import InventoryPage from "../pages/InventoryPage";
 
 const rootRoute = createRootRoute();
 const loginRoute = createRoute({
@@ -56,6 +57,12 @@ const productDetailsRoute = createRoute({
   path: "/products/$productId",
   component: ProductDetailsPage,
 });
+
+const inventoryRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/inventory",
+  component: InventoryPage,
+});
 /**
  * Route Tree
  */
@@ -66,6 +73,7 @@ const routeTree = rootRoute.addChildren([
     productsRoute,
     CategoryRoute,
     unitsRoute,
+    inventoryRoute,
     productDetailsRoute,
   ]),
 ]);

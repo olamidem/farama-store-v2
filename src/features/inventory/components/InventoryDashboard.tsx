@@ -4,7 +4,7 @@ import InventoryTimeline from "./timeline/InventoryTimeline";
 import StockAdjustmentCard from "./cards/StockAdjustmentCard";
 import TransactionTypesCard from "./cards/TransactionTypesCard";
 import InventoryHelpCard from "./cards/InventoryHelpCard";
-import ProductStockOverview from "./timeline/ProductStockOverview";
+import ProductStockOverview from "./tables/ProductStockOverview";
 
 export default function InventoryDashboard() {
   return (
