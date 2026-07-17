@@ -1,17 +1,25 @@
-import DataTable from "../../../../components/table/DataTable";
-import { inventoryColumns } from "./inventoryColumns";
-import { inventoryTransactions } from "../../mock/inventory.mock";
+import DataTable from "../../../../components/ui/DataTable/DataTable";
+import { useInventoryTransactions } from "../../hooks/useInventory";
+import { inventoryTransactionColumns } from "../inventoryTransactionColumns";
 
 export default function InventoryTransactionsTable() {
+  const { data: transactions = [], isLoading } = useInventoryTransactions();
+
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-bold">Inventory Movement Journal</h2>
-          <p className="text-sm text-slate-500">Latest inventory movements</p>
-        </div>
+    <div className="rounded-2xl border bg-white p-6">
+      <div className="mb-5">
+        <h2 className="text-lg font-semibold">Inventory Transactions</h2>
+
+        <p className="text-sm text-slate-500">
+          Complete inventory movement history
+        </p>
       </div>
-      <DataTable data={inventoryTransactions} columns={inventoryColumns} />
+
+      <DataTable
+        data={transactions}
+        columns={inventoryTransactionColumns}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
