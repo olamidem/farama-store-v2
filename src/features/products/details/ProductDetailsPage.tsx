@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { motion } from "motion/react";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { ProductDetailsActivity } from "./components/ProductDetailsActivity";
+import ProductUnitsManager from "../product-units/components/ProductUnitsManager";
 
 export const ProductDetailsPage = () => {
   const { productId } = useParams({ strict: false }) as { productId: string };
@@ -114,6 +115,7 @@ export const ProductDetailsPage = () => {
             product={product}
             categoryName={categoryName}
           />
+          <ProductUnitsManager product={product} />
           <ProductDetailsHistoryTabs
             product={product}
             categoryName={categoryName}

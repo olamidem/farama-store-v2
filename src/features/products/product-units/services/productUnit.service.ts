@@ -2,8 +2,6 @@ import { supabase } from "../../../../api/supabase";
 import { throwSupabaseError } from "../../../../utils/supabaseError";
 import type { CreateProductUnitInput, ProductUnit, UpdateProductUnitInput } from "../types/productUnit";
 
-
-
 export const getProductUnits = async (
   productId: string,
 ): Promise<ProductUnit[]> => {
@@ -21,7 +19,8 @@ export const getProductUnits = async (
     .order("sort_order");
   throwSupabaseError(error);
   return (
-    data?.map((item) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data?.map((item: any) => ({
       ...item,
       unit_name: item.units?.name ?? "",
       unit_symbol: item.units?.symbol ?? "",

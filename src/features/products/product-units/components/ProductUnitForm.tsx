@@ -177,6 +177,15 @@ export const ProductUnitsForm = ({
         />
       </div>
 
+      <ProductUnitSummary
+    product={product}
+    baseUnit={baseUnit}
+    selectedUnit={selectedUnit}
+    conversionFactor={watchedConversion}
+    costPrice={watchedCostPrice}
+    sellingPrice={watchedSellingPrice}
+/>
+
       {/* Preview */}
       {selectedUnit && (
         <ProductUnitPreview
