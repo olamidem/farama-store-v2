@@ -25,3 +25,10 @@ export interface CreateProductUnitInput {
   is_default?: boolean;
   sort_order?: number;
 }
+
+export type UpdateProductUnitInput = Partial<CreateProductUnitInput>;
+
+export interface ProductUnitWithRelations extends ProductUnit {
+  unit_name: string;
+  unit_symbol: string;
+}

@@ -1,141 +1,201 @@
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateProductUnitSku } from "../utils/generateProductUnitSku";
+import { Calculator, Sparkles, Barcode } from "lucide-react";
+import type { Product } from "../../types/product";
+import type { Unit } from "../../../units/types/unit";
+import type { ProductUnit } from "../types/productUnit";
 import {
   createProductUnitSchema,
   type ProductUnitFormData,
 } from "../validation/productUnit.schema";
-import ProductUnitInformation from "./ProductUnitInformation";
+import Button from "../../../../components/ui/Button";
+import {
+  FormInput,
+  FormNumberInput,
+  FormSelect,
+} from "../../../../components/forms";
+import FormCurrencyInput from "../../../../components/forms/FormCurrencyInput";
 import ProductUnitPreview from "./ProductUnitPreview";
-import ProductUnitFooter from "./ProductUnitFooter";
-import type { Product } from "../../types/product";
-import type { Unit } from "../../../units/types/unit";
-import { useCreateProductUnit } from "../hooks/useProductUnitMutations";
-import { generateBarcode } from "../../utils/generateBarcode";
-import ProductUnitPricing from "./ProductUnitPrcing";
 
-interface ProductUnitFormProps {
+interface ProductUnitsFormProps {
   product: Product;
-  units: Unit[];
-  baseUnit: Unit;
+  generalUnits: Unit[];
+  editingUnit: ProductUnit | null;
+  onSubmit: (
+    productId: string,
+    data: ProductUnitFormData
+) => Promise<void>;
   onCancel: () => void;
-  onSuccess?: () => void;
+  isPending: boolean;
 }
 
-const ProductUnitForm = ({
+export const ProductUnitsForm = ({
   product,
-  units,
-  baseUnit,
+  generalUnits,
+  editingUnit,
+  onSubmit,
   onCancel,
-  onSuccess,
-}: ProductUnitFormProps) => {
-  const createProductUnit = useCreateProductUnit();
+  isPending,
+}: ProductUnitsFormProps) => {
+  const { control, handleSubmit, reset, setValue, watch } =
+    useForm<ProductUnitFormData>({
+      resolver: zodResolver(createProductUnitSchema),
+      defaultValues: {
+        unit_id: "",
+        conversion_factor: 1,
+        selling_price: 0,
+        cost_price: 0,
+        sku: "",
+        barcode: "",
+      },
+    });
 
-  const form = useForm<ProductUnitFormData>({
-    resolver: zodResolver(createProductUnitSchema),
-    mode: "onChange",
-    defaultValues: {
-      unit_id: "",
-      conversion_factor: 1,
-      selling_price: product.selling_price,
-      cost_price: product.cost_price,
-    },
-  });
+  const watchedUnitId = watch("unit_id");
+  const watchedConversion = watch("conversion_factor") || 1;
 
-  const selectedUnitId = useWatch({
-    control: form.control,
-    name: "unit_id",
-  });
+  const selectedUnit = useMemo(() => {
+    return generalUnits.find((unit) => unit.id === watchedUnitId);
+  }, [generalUnits, watchedUnitId]);
 
-  const conversionFactor = useWatch({
-    control: form.control,
-    name: "conversion_factor",
-  });
+  const activeUnits = generalUnits.filter((unit) => unit.is_active);
+  const handleAutoSuggest = () => {
+  const factor = Number(watchedConversion) || 1;
 
-  const sellingPrice = useWatch({
-    control: form.control,
-    name: "selling_price",
-  });
+  setValue("cost_price", product.cost_price * factor);
 
-  const costPrice = useWatch({
-    control: form.control,
-    name: "cost_price",
-  });
+  setValue("selling_price", product.selling_price * factor);
 
-  const selectedUnit = useMemo(
-    () => units.find((unit) => unit.id === selectedUnitId),
-    [units, selectedUnitId],
-  );
+    if (selectedUnit) {
+      setValue("sku", `${product.sku}-${selectedUnit.symbol.toUpperCase()}`);
+    }
+  };
 
-  // Stateful previews
-  const [skuPreview, setSkuPreview] = useState("");
-  const [barcodePreview, setBarcodePreview] = useState(() => generateBarcode());
-
-  // Update SKU whenever the selected unit changes
   useEffect(() => {
-    if (!selectedUnit) {
-      setSkuPreview("");
+    if (editingUnit) {
+      reset({
+        unit_id: editingUnit.unit_id,
+        conversion_factor: editingUnit.conversion_factor,
+        selling_price: editingUnit.selling_price,
+        cost_price: editingUnit.cost_price,
+        sku: editingUnit.sku,
+        barcode: editingUnit.barcode || "",
+      });
+
       return;
     }
 
-    setSkuPreview(generateProductUnitSku(product.sku, selectedUnit));
-  }, [selectedUnit, product.sku]);
-
-  const profit = sellingPrice - costPrice;
-
-  const margin = sellingPrice > 0 ? (profit / sellingPrice) * 100 : 0;
-
-  const resetForm = () => {
-    form.reset({
+    reset({
       unit_id: "",
       conversion_factor: 1,
-      selling_price: product.selling_price,
-      cost_price: product.cost_price,
+      selling_price: 0,
+      cost_price: 0,
+      sku: "",
+      barcode: "",
     });
-    setSkuPreview("");
-    setBarcodePreview(generateBarcode());
-  };
-
-  const submit = async (values: ProductUnitFormData) => {
-    await createProductUnit.mutateAsync({
-      product_id: product.id,
-      unit_id: values.unit_id,
-      conversion_factor: values.conversion_factor,
-      selling_price: values.selling_price,
-      cost_price: values.cost_price,
-      barcode: barcodePreview,
-      sku: skuPreview,
-    });
-    resetForm();
-    onSuccess?.();
-  };
-
+  }, [editingUnit, product.id, reset]);
   return (
-    <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
-      <ProductUnitInformation
-        control={form.control}
-        units={units}
-        baseUnitId={baseUnit.id}
-        baseUnitName={baseUnit.name}
-        selectedUnit={selectedUnit}
-        conversionFactor={conversionFactor}
-      />
+    <form
+      onSubmit={handleSubmit((data) =>
+        onSubmit(product.id, data),
+      )}
+      className="p-5 border border-blue-100 bg-blue-50/20 rounded-2xl space-y-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-blue-100 pb-3">
+        <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-800">
+          <Sparkles className="h-4 w-4 text-blue-500" />
+          {editingUnit ? "Edit Selling Unit" : "New Selling Unit Configuration"}
+        </h4>
 
-      <ProductUnitPricing
-        control={form.control}
-        profit={profit}
-        margin={margin}
-      />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={handleAutoSuggest}
+          disabled={!selectedUnit}
+          className="flex items-center gap-2"
+        >
+          <Calculator className="h-4 w-4" />
+          Auto Calculate
+        </Button>
+      </div>
 
-      <ProductUnitPreview sku={skuPreview} barcode={barcodePreview} />
+      {/* First Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FormSelect
+          control={control}
+          name="unit_id"
+          label="Selling Unit Of Measure"
+          placeholder="Select unit..."
+          options={activeUnits.map((unit) => ({
+            label: `${unit.name} (${unit.symbol})`,
+            value: unit.id,
+          }))}
+        />
 
-      <ProductUnitFooter
-        loading={createProductUnit.isPending}
-        onCancel={onCancel}
-      />
+        <FormNumberInput
+          control={control}
+          name="conversion_factor"
+          label="Conversion Factor"
+          placeholder="12"
+          suffix={selectedUnit?.symbol}
+        />
+
+        <FormInput
+          control={control}
+          name="sku"
+          label="Selling Unit SKU"
+          placeholder="BEV-COKE-CTN"
+          className="font-mono uppercase"
+        />
+      </div>
+
+      {/* Second Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FormCurrencyInput
+          control={control}
+          name="cost_price"
+          label="Cost Price"
+          placeholder="0.00"
+        />
+
+        <FormCurrencyInput
+          control={control}
+          name="selling_price"
+          label="Selling Price"
+          placeholder="0.00"
+        />
+
+        <FormInput
+          control={control}
+          name="barcode"
+          label="Barcode (Optional)"
+          placeholder="615110001"
+          icon={<Barcode className="h-4 w-4" />}
+          className="font-mono"
+        />
+      </div>
+
+      {/* Preview */}
+      {selectedUnit && (
+        <ProductUnitPreview
+          sku={watch("sku") ?? ""}
+          barcode={watch("barcode") ?? ""}
+        
+        />
+      )}
+
+      {/* Footer */}
+      <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+
+        <Button type="submit" loading={isPending}>
+          {editingUnit ? "Save Changes" : "Create Selling Unit"}
+        </Button>
+      </div>
     </form>
   );
 };
-
-export default ProductUnitForm;

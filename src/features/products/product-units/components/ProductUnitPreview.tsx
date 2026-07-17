@@ -3,7 +3,7 @@ import Label from "../../../../components/ui/Label";
 
 interface ProductUnitPreviewProps {
   sku: string;
-  barcode: string;
+  barcode?: string;
 }
 
 const ProductUnitPreview = ({ sku, barcode }: ProductUnitPreviewProps) => {
@@ -33,7 +33,7 @@ const ProductUnitPreview = ({ sku, barcode }: ProductUnitPreviewProps) => {
 
           <Input
             readOnly
-            value={barcode}
+            value={barcode ?? ""}
             className="bg-slate-100 font-mono cursor-not-allowed"
           />
         </div>

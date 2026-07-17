@@ -1,6 +1,6 @@
 import { supabase } from "../../../../api/supabase";
 import { throwSupabaseError } from "../../../../utils/supabaseError";
-import type { CreateProductUnitInput, ProductUnit } from "../types/productUnit";
+import type { CreateProductUnitInput, ProductUnit, UpdateProductUnitInput } from "../types/productUnit";
 
 
 
@@ -20,7 +20,13 @@ export const getProductUnits = async (
     .eq("product_id", productId)
     .order("sort_order");
   throwSupabaseError(error);
-  return data ?? [];
+  return (
+    data?.map((item) => ({
+      ...item,
+      unit_name: item.units?.name ?? "",
+      unit_symbol: item.units?.symbol ?? "",
+    })) ?? []
+  );
 };
 
 export const createProductUnit = async (

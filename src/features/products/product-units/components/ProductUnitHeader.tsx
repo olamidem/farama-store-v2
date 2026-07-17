@@ -1,29 +1,33 @@
 import Button from "../../../../components/ui/Button";
 
-interface ProductUnitHeaderProps {
-  totalUnits: number;
-  onAddUnit: () => void;
+interface ProductUnitsHeaderProps {
+  showAddButton?: boolean;
+  onAdd: () => void;
 }
 
-const ProductUnitHeader = ({
-  totalUnits,
-  onAddUnit,
-}: ProductUnitHeaderProps) => {
+export default function ProductUnitsHeader({
+  showAddButton = true,
+  onAdd,
+}: ProductUnitsHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+    <div className="flex items-center justify-between">
       <div>
-        <h2 className="text-lg font-semibold text-slate-800">Selling Units</h2>
-
+        <h2 className="text-lg font-semibold">
+          Selling Units
+        </h2>
         <p className="text-sm text-slate-500">
-          {totalUnits} {totalUnits === 1 ? "unit" : "units"} configured
+          Configure product selling units and pricing.
         </p>
       </div>
 
-      <Button variant="primary" onClick={onAddUnit}>
-        + Add Selling Unit
-      </Button>
+      {showAddButton && (
+        <Button
+          onClick={onAdd}
+          size="sm"
+        >
+          Add Selling Unit
+        </Button>
+      )}
     </div>
   );
-};
-
-export default ProductUnitHeader;
+}
