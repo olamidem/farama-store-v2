@@ -16,10 +16,10 @@ export type CreateProductResult =
 export async function createProductWorkflow(
   input: CreateProductInput,
 ): Promise<CreateProductResult> {
-  const duplicate = await checkDuplicateProduct({
-    name: input.name,
-    categoryId: input.category_id,
-  });
+  const duplicate = await checkDuplicateProduct(
+    input.name,
+    input.category_id,
+  );
 
   if (duplicate) {
     return {
