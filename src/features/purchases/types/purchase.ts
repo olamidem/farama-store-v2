@@ -1,6 +1,6 @@
-import type { PurchaseItem } from "./purchaseItem";
+import type { PurchaseStatus } from "../constants/purchase.constants";
+import type { PurchaseItem, CreatePurchaseItemInput } from "./purchaseItem";
 import type { Supplier } from "./supplier";
-
 export interface Purchase {
   id: string;
   purchase_number: string;
@@ -15,6 +15,7 @@ export interface Purchase {
   created_by: string;
   created_at: string;
   updated_at: string;
+  // Relations
   supplier?: Supplier;
   items?: PurchaseItem[];
   creator?: PurchaseCreator;
@@ -35,11 +36,6 @@ export interface CreatePurchaseInput {
   items: CreatePurchaseItemInput[];
 }
 
-export interface UpdatePurchaseInput {
-  supplier_id?: string;
+export type UpdatePurchaseInput = Partial<CreatePurchaseInput> & {
   status?: PurchaseStatus;
-  purchase_date?: string;
-  expected_delivery_date?: string;
-  warehouse_id?: string;
-  remarks?: string;
-}
+};
