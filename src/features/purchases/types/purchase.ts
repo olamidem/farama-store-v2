@@ -1,4 +1,5 @@
-import type { CreatePurchaseItemInput, CreatePurchaseItemInput, PurchaseItem } from "./purchaseItem";
+import type { PurchaseItem } from "./purchaseItem";
+import type { Supplier } from "./supplier";
 
 export interface Purchase {
   id: string;
