@@ -1,3 +1,6 @@
+import type { ProductUnit } from "../../products/product-units/types/productUnit";
+import type { Product } from "../../products/types/product";
+
 export interface PurchaseItem {
   id: string;
   purchase_id: string;
@@ -7,6 +10,9 @@ export interface PurchaseItem {
   unit_cost: number;
   total_cost: number;
   received_quantity: number;
+  remaining_quantity?: number;
+  product?: Product;
+  product_unit?: ProductUnit;
 }
 
 export interface CreatePurchaseItemInput {
@@ -15,3 +21,5 @@ export interface CreatePurchaseItemInput {
   quantity: number;
   unit_cost: number;
 }
+
+export type UpdatePurchaseItemInput = Partial<CreatePurchaseItemInput>;
