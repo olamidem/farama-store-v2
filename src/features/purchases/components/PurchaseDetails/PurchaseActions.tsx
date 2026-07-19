@@ -1,5 +1,4 @@
 import { ChevronDown, Edit, PackageOpen } from "lucide-react";
-import Button from "../../../../components/ui/Button";
 import type { Purchase } from "../../types/purchase";
 
 interface PurchaseActionsProps {
@@ -16,32 +15,38 @@ const PurchaseActions = ({
   const isFullyReceived = purchase.status === "RECEIVED";
 
   return (
-    <div className="flex items-center gap-2">
-      <Button type="button" variant="secondary" size="sm" onClick={onEdit}>
-        <Edit size={14} />
-        Edit
-      </Button>
+    <div
+      className="flex items-center justify-between gap-3 w-full"
+      id={`purchase-actions-${purchase.id}`}
+    >
+      {/* Edit Purchase Button */}
+      <button
+        onClick={onEdit}
+        type="button"
+        className="flex items-center gap-1.5 px-4.5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition shadow-3xs"
+      >
+        <Edit size={13} className="text-slate-500" />
+        <span>Edit Purchase</span>
+      </button>
 
-      <div className="flex items-center">
-        <Button
-          type="button"
-          size="sm"
+      {/* Receive Goods Button (Split) */}
+      <div className="flex items-center shrink-0">
+        <button
           onClick={onReceive}
           disabled={isFullyReceived}
-          className="rounded-r-none"
-        >
-          <PackageOpen size={14} />
-          Receive Goods
-        </Button>
-
-        <Button
           type="button"
-          size="sm"
-          disabled={isFullyReceived}
-          className="rounded-l-none border-l border-blue-500 px-3"
+          className="flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-l-xl transition shadow-3xs border-0 cursor-pointer"
         >
-          <ChevronDown size={14} />
-        </Button>
+          <PackageOpen size={13} />
+          <span>Receive Goods</span>
+        </button>
+        <button
+          disabled={isFullyReceived}
+          type="button"
+          className="flex items-center justify-center px-3 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-r-xl transition shadow-3xs border-l border-blue-500/50 border-0 cursor-pointer"
+        >
+          <ChevronDown size={13} />
+        </button>
       </div>
     </div>
   );

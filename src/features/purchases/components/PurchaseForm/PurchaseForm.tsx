@@ -4,17 +4,13 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import PageHeader from "../../../../components/ui/PageHeader";
 import Button from "../../../../components/ui/Button";
+import SupplierInformation from "./SupplierInformation";
 import PurchaseItemsTable from "./PurchaseItemsTable";
 import PurchaseSummary from "./PurchaseSummary";
 import type { ItemRowValue } from "./PurchaseItemRow";
-
-import { useCreatePurchase } from "../../hook/usePurchasesMutations";
-import {
-  useCatalogProducts,
-  useCatalogProductUnits,
-} from "../../hook/useCatalog";
-
 import { getToday, getFutureDate } from "../../utils/date";
+import { useCreatePurchase } from "../../hook/usePurchasesMutations";
+import { useCatalogProducts, useCatalogProductUnits } from "../../hook/useCatalog";
 
 interface PurchaseFormProps {
   onSuccess?: () => void;
@@ -49,7 +45,9 @@ const PurchaseForm = ({
   // Form State
   const [supplierId, setSupplierId] = useState("");
   const [remarks, setRemarks] = useState("");
+
   const [purchaseDate, setPurchaseDate] = useState(getToday());
+
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState(
     getFutureDate(5),
   );
@@ -115,8 +113,6 @@ const PurchaseForm = ({
         })),
       });
 
-      toast.success("Purchase order created successfully.");
-
       if (onSuccess) {
         onSuccess();
         return;
@@ -164,8 +160,8 @@ const PurchaseForm = ({
       >
         <div className="space-y-6 lg:col-span-2">
           <SupplierInformation
-            supplierId={supplierId}
-            setSupplierId={setSupplierId}
+            selectedSupplierId={supplierId}
+            onSupplierChange={setSupplierId}
           />
 
           <PurchaseItemsTable

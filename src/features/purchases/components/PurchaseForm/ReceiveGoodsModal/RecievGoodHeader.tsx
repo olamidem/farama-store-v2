@@ -1,33 +1,30 @@
-import { X } from "lucide-react";
-import Button from "../../../../../components/ui/Button";
+import { X, PackageOpen } from "lucide-react";
 
-interface ReceiveGoodsHeaderProps {
+interface RecievGoodHeaderProps {
   purchaseNumber: string;
   onClose: () => void;
 }
 
-const ReceiveGoodsHeader = ({
+export const RecievGoodHeader = ({
   purchaseNumber,
   onClose,
-}: ReceiveGoodsHeaderProps) => {
+}: RecievGoodHeaderProps) => {
   return (
-    <div className="flex items-center justify-between border-b border-slate-200 p-5">
-      <div>
-        <h2 className="text-sm font-extrabold text-slate-800">Receive Goods</h2>
-        <p className="mt-1 text-xs font-semibold text-slate-400">
-          {purchaseNumber}
-        </p>
+    <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div className="flex items-center gap-2">
+        <PackageOpen className="text-indigo-600" size={18} />
+        <span className="font-extrabold text-slate-800 text-sm">
+          Receive Goods - {purchaseNumber}
+        </span>
       </div>
-
-      <Button
+      <button
         onClick={onClose}
-        type="button"
-        className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+        className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer transition shadow-none"
       >
         <X size={16} />
-      </Button>
+      </button>
     </div>
   );
 };
 
-export default ReceiveGoodsHeader;
+export default RecievGoodHeader;

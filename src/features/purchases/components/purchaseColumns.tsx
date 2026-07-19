@@ -2,6 +2,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import type { Purchase } from "../types/purchase";
 import { getStatusBadgeStyle, formatStatusText } from "../utils/purchaseStatus";
+import { formatDate } from "../../../utils/formatDate";
+import { formatCurrency } from "../../../utils/formatCurrenty";
 
 interface ColumnOptions {
   onView: (purchase: Purchase) => void;
@@ -13,128 +15,17 @@ export const createPurchaseColumns = ({
   onView,
   onEdit,
   onDelete,
-  isCompact,
 }: ColumnOptions & { isCompact?: boolean }): ColumnDef<Purchase>[] => {
-  const formatNaira = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
-  const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
-  if (isCompact) {
-    return [
-      {
-        accessorKey: "purchase_number",
-        header: "Purchase Order",
-        cell: ({ row }) => {
-          const purchase = row.original;
-          return (
-            <div
-              className="flex flex-col"
-              id={`purchase-col-compact-${purchase.id}`}
-            >
-              <button
-                onClick={() => onView(purchase)}
-                className="text-xs font-extrabold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer bg-transparent border-0 p-0 text-left"
-                id={`btn-compact-view-${purchase.id}`}
-              >
-                {purchase.purchase_number}
-              </button>
-              <span className="text-[10px] text-slate-400 font-semibold truncate max-w-30 block">
-                {purchase.supplier?.name || "Unknown"}
-              </span>
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: "received_percentage",
-        header: "Rec.",
-        cell: ({ row }) => {
-          const pct = row.original.received_percentage || 0;
-          let barColor = "bg-slate-200";
-          if (pct === 100) {
-            barColor = "bg-emerald-500";
-          } else if (pct > 0) {
-            barColor = "bg-indigo-500";
-          }
-
-          return (
-            <div
-              className="flex items-center gap-1"
-              id={`pct-col-compact-${row.original.id}`}
-            >
-              <span className="text-[9px] font-extrabold text-slate-500 min-w-6">
-                {pct}%
-              </span>
-              <div className="h-1.5 w-10 bg-slate-100 rounded-full overflow-hidden shrink-0">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${barColor}`}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-          const p = row.original;
-          return (
-            <div
-              className="flex items-center gap-1"
-              id={`actions-col-compact-${p.id}`}
-            >
-              <button
-                onClick={() => onView(p)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer transition"
-                title="View Details"
-                id={`btn-compact-eye-${p.id}`}
-              >
-                <Eye size={13} />
-              </button>
-              <button
-                onClick={() => onEdit(p)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer transition"
-                title="Edit PO"
-                id={`btn-compact-edit-${p.id}`}
-              >
-                <Edit size={13} />
-              </button>
-            </div>
-          );
-        },
-      },
-    ];
-  }
-
   return [
     {
       accessorKey: "purchase_number",
-      header: "PO Number",
+      header: "PO NUMBER",
       cell: ({ row }) => {
         const purchase = row.original;
         return (
           <button
             onClick={() => onView(purchase)}
-            className="text-xs font-extrabold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer bg-transparent border-0 p-0 text-left"
+            className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer bg-transparent border-0 p-0 text-left transition"
             id={`btn-view-${purchase.id}`}
           >
             {purchase.purchase_number}
@@ -144,7 +35,7 @@ export const createPurchaseColumns = ({
     },
     {
       accessorKey: "supplier.name",
-      header: "Supplier",
+      header: "SUPPLIER",
       cell: ({ row }) => {
         return (
           <span className="text-xs font-bold text-slate-800">
@@ -155,12 +46,12 @@ export const createPurchaseColumns = ({
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: "STATUS",
       cell: ({ row }) => {
         const status = row.original.status;
         return (
           <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide uppercase ${getStatusBadgeStyle(
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide uppercase border ${getStatusBadgeStyle(
               status,
             )}`}
           >
@@ -171,18 +62,18 @@ export const createPurchaseColumns = ({
     },
     {
       accessorKey: "total_amount",
-      header: "Total",
+      header: "TOTAL",
       cell: ({ row }) => {
         return (
-          <span className="font-mono text-xs font-extrabold text-slate-800">
-            {formatNaira(row.original.total_amount)}
+          <span className="font-sans text-xs font-extrabold text-slate-800">
+            {formatCurrency(row.original.total_amount)}
           </span>
         );
       },
     },
     {
       accessorKey: "purchase_date",
-      header: "Date",
+      header: "DATE",
       cell: ({ row }) => {
         return (
           <span className="text-xs font-semibold text-slate-500">
@@ -193,14 +84,14 @@ export const createPurchaseColumns = ({
     },
     {
       accessorKey: "received_percentage",
-      header: "Received",
+      header: "RECEIVED",
       cell: ({ row }) => {
         const pct = row.original.received_percentage || 0;
         let barColor = "bg-slate-200";
         if (pct === 100) {
           barColor = "bg-emerald-500";
         } else if (pct > 0) {
-          barColor = "bg-indigo-500";
+          barColor = "bg-blue-600";
         }
 
         return (
@@ -223,14 +114,14 @@ export const createPurchaseColumns = ({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "ACTIONS",
       cell: ({ row }) => {
         const p = row.original;
         return (
-          <div className="flex items-center gap-1.5" id={`actions-col-${p.id}`}>
+          <div className="flex items-center gap-1" id={`actions-col-${p.id}`}>
             <button
               onClick={() => onView(p)}
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer transition"
+              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600 cursor-pointer transition"
               title="View Details"
               id={`btn-eye-${p.id}`}
             >
@@ -238,7 +129,7 @@ export const createPurchaseColumns = ({
             </button>
             <button
               onClick={() => onEdit(p)}
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer transition"
+              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition"
               title="Edit PO"
               id={`btn-edit-${p.id}`}
             >

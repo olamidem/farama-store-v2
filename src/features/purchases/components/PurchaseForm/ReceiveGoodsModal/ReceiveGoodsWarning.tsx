@@ -1,13 +1,12 @@
 import { AlertTriangle } from "lucide-react";
 
-const ReceiveGoodsWarning = () => {
+export const ReceiveGoodsWarning = () => {
   return (
-    <div className="flex gap-3 rounded-xl border border-amber-100 bg-amber-50/70 p-3">
-      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-500" />
-
-      <div className="text-[10px] font-semibold leading-relaxed text-amber-800">
-        Receiving goods will immediately update inventory quantities and create
-        inventory transaction records.
+    <div className="p-3 bg-amber-50/75 border border-amber-100 rounded-xl flex gap-3 text-amber-800">
+      <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+      <div className="text-[10px] font-semibold leading-relaxed">
+        Receiving goods will instantly update active product inventory stock levels
+        and create traceable transaction logs in the recent activity logs.
       </div>
     </div>
   );

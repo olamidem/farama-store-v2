@@ -6,12 +6,14 @@ import {
   formatStatusText,
 } from "../../utils/purchaseStatus";
 import PurchaseInformation from "./PurchaseInformation";
-import { PURCHASE_OVERVIEW_TABS, type PurchaseOverviewTab } from "../../constant/purchaseOverview.constants";
+import {
+  PURCHASE_OVERVIEW_TABS,
+  type PurchaseOverviewTab,
+} from "../../constant/purchaseOverview.constants";
 import PurchaseItemsTable from "./PurchaseItemsTable";
 import PurchaseTimeline from "./PurchaseTimeline";
 import PurchaseActions from "./PurchaseActions";
 import ReceiveGoodsModal from "../PurchaseForm/ReceiveGoodsModal/ReceiveGoodModal";
-
 
 interface PurchaseOverviewProps {
   purchase: Purchase;
@@ -24,27 +26,29 @@ export const PurchaseOverview = ({
   onClose,
   onEdit,
 }: PurchaseOverviewProps) => {
-const [activeTab, setActiveTab] = useState<PurchaseOverviewTab>(PURCHASE_OVERVIEW_TABS.OVERVIEW);
+  const [activeTab, setActiveTab] = useState<PurchaseOverviewTab>(
+    PURCHASE_OVERVIEW_TABS.OVERVIEW,
+  );
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
 
- const tabs = [
-   {
-     id: PURCHASE_OVERVIEW_TABS.OVERVIEW,
-     label: "Overview",
-   },
-   {
-     id: PURCHASE_OVERVIEW_TABS.ITEMS,
-     label: "Items",
-   },
-   {
-     id: PURCHASE_OVERVIEW_TABS.RECEIVE,
-     label: "Receive Goods",
-   },
-   {
-     id: PURCHASE_OVERVIEW_TABS.HISTORY,
-     label: "History",
-   },
- ] as const;
+  const tabs = [
+    {
+      id: PURCHASE_OVERVIEW_TABS.OVERVIEW,
+      label: "Overview",
+    },
+    {
+      id: PURCHASE_OVERVIEW_TABS.ITEMS,
+      label: "Items",
+    },
+    {
+      id: PURCHASE_OVERVIEW_TABS.RECEIVE,
+      label: "Receive Goods",
+    },
+    {
+      id: PURCHASE_OVERVIEW_TABS.HISTORY,
+      label: "History",
+    },
+  ] as const;
 
   return (
     <div className="h-full bg-slate-50 border-l border-slate-200 shadow-xl flex flex-col w-full">
@@ -172,12 +176,9 @@ const [activeTab, setActiveTab] = useState<PurchaseOverviewTab>(PURCHASE_OVERVIE
 
       {/* Receive Goods modal */}
       <ReceiveGoodsModal
-        key={purchase.id}
         purchase={purchase}
         isOpen={isReceiveModalOpen}
-        isSubmitting={receivePurchaseMutation.isPending}
         onClose={() => setIsReceiveModalOpen(false)}
-        onSubmit={handleReceiveGoods}
       />
     </div>
   );

@@ -2,61 +2,46 @@ import type { PurchaseItem } from "../../../types/purchaseItem";
 
 interface ReceiveGoodsItemProps {
   item: PurchaseItem;
-  value: number;
+  quantity: number;
+  remaining: number;
   onChange: (value: number) => void;
 }
 
-const ReceiveGoodsItem = ({ item, value, onChange }: ReceiveGoodsItemProps) => {
-  const ordered = item.quantity;
-  const received = item.received_quantity ?? 0;
-  const remaining = ordered - received;
+export const ReceiveGoodsItem = ({
+  item,
+  quantity,
+  remaining,
+  onChange,
+}: ReceiveGoodsItemProps) => {
+  const prevRec = item.received_quantity || 0;
+  const unitDisplay =
+    (item.product_unit as unknown as { unit?: { name: string } })?.unit?.name ||
+    "pcs";
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <div className="flex justify-between gap-6">
-        <div className="space-y-1">
-          <h4 className="text-sm font-bold text-slate-800">
-            {item.product?.name}
-          </h4>
+    <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between gap-4">
+      <div className="min-w-0">
+        <span className="text-xs font-bold text-slate-800 block truncate">
+          {item.product?.name || "Product"}
+        </span>
+        <span className="text-[10px] text-slate-400 font-semibold block mt-1">
+          Ordered: {item.quantity} {unitDisplay} | Previously Received:{" "}
+          {prevRec}
+        </span>
+      </div>
 
-          <p className="text-xs text-slate-500">
-            Unit: {item.product_unit?.unit?.name}
-          </p>
-
-          <div className="flex gap-4 text-xs text-slate-500">
-            <span>
-              Ordered:
-              <strong className="ml-1 text-slate-700">{ordered}</strong>
-            </span>
-
-            <span>
-              Received:
-              <strong className="ml-1 text-emerald-600">{received}</strong>
-            </span>
-
-            <span>
-              Remaining:
-              <strong className="ml-1 text-orange-600">{remaining}</strong>
-            </span>
-          </div>
-        </div>
-
-        <div className="w-28">
-          <label className="block mb-1 text-xs font-semibold text-slate-500">
-            Receive
-          </label>
-
-          <input
-            type="number"
-            min={0}
-            max={remaining}
-            value={value}
-            onChange={(e) =>
-              onChange(Math.min(Number(e.target.value), remaining))
-            }
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 text-center text-sm font-semibold focus:border-indigo-500 focus:outline-none"
-          />
-        </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-[10px] font-bold text-slate-400">
+          Receive Qty:
+        </span>
+        <input
+          type="number"
+          min={0}
+          max={remaining}
+          value={quantity}
+          onChange={(e) => onChange(parseInt(e.target.value) || 0)}
+          className="w-20 px-2.5 py-1.5 text-xs text-center border border-slate-200 rounded-lg bg-white font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+        />
       </div>
     </div>
   );

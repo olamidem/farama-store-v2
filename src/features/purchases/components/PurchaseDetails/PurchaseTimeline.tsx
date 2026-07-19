@@ -1,5 +1,4 @@
-import { Check, Clock, Dot } from "lucide-react";
-
+import { Check, Calendar } from "lucide-react";
 import { PURCHASE_STATUS } from "../../constant/purchase.constants";
 import { formatDate } from "../../../../utils/formatDate";
 import type { Purchase } from "../../types/purchase";
@@ -14,98 +13,70 @@ const PurchaseTimeline = ({ purchase }: PurchaseTimelineProps) => {
   const steps = [
     {
       title: "Purchase Created",
-      description: `Logged on ${formatDate(
-        purchase.created_at,
-        true,
-      )} by Admin User`,
+      description: `${formatDate(purchase.created_at, true)} by Admin User`,
       isCompleted: true,
       isActive: false,
     },
-
     {
-      title: "Vendor Ordered",
-      description:
-        status === PURCHASE_STATUS.DRAFT || status === PURCHASE_STATUS.PENDING
-          ? "Awaiting vendor order confirmation"
-          : `Sent to supplier on ${formatDate(purchase.updated_at, true)}`,
-
+      title: "Awaiting Delivery",
+      description: `${formatDate(purchase.updated_at, true)}`,
       isCompleted:
         status !== PURCHASE_STATUS.DRAFT && status !== PURCHASE_STATUS.PENDING,
-
-      isActive: status === PURCHASE_STATUS.PENDING,
+      isActive:
+        status === PURCHASE_STATUS.PENDING || status === PURCHASE_STATUS.DRAFT,
     },
-
     {
       title: "Goods Received",
-
       description:
-        status === PURCHASE_STATUS.RECEIVED
-          ? "Goods fully received and verified"
-          : status === PURCHASE_STATUS.PARTIALLY_RECEIVED
-            ? `Partially received (${purchase.received_percentage ?? 0}%)`
-            : "Awaiting physical delivery receipt",
-
+        status === PURCHASE_STATUS.RECEIVED ? "Fully Received" : "Pending",
       isCompleted: status === PURCHASE_STATUS.RECEIVED,
-
       isActive:
         status === PURCHASE_STATUS.PARTIALLY_RECEIVED ||
         status === PURCHASE_STATUS.ORDERED,
     },
-
     {
       title: "Inventory Updated",
-
-      description:
-        status === PURCHASE_STATUS.RECEIVED
-          ? "Inventory count automatically updated"
-          : status === PURCHASE_STATUS.PARTIALLY_RECEIVED
-            ? "Inventory count partially updated"
-            : "Pending goods arrival",
-
+      description: status === PURCHASE_STATUS.RECEIVED ? "Updated" : "Pending",
       isCompleted: status === PURCHASE_STATUS.RECEIVED,
-
       isActive: status === PURCHASE_STATUS.PARTIALLY_RECEIVED,
     },
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-xs">
-      <h4 className="mb-5 text-xs font-bold uppercase tracking-wide text-slate-700">
-        Purchase Timeline
+    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-3xs">
+      <h4 className="mb-6 flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-800">
+        <Calendar size={14} className="text-blue-500" />
+        <span>Purchase Timeline</span>
       </h4>
 
-      <div className="relative ml-3 border-l border-slate-100 pl-6 space-y-6">
+      <div className="relative ml-2.5 border-l-2 border-slate-100 pl-6 space-y-6">
         {steps.map((step) => {
-          let iconContainer =
-            "bg-slate-100 text-slate-400 border border-slate-200";
-
-          let icon = <Clock size={11} />;
+          let iconContainer = "bg-slate-100 text-slate-300 ring-4 ring-white";
+          let icon = <div className="h-2 w-2 rounded-full bg-slate-300" />;
 
           if (step.isCompleted) {
-            iconContainer = "bg-emerald-500 text-white";
-
+            iconContainer = "bg-emerald-500 text-white ring-4 ring-emerald-50";
             icon = <Check size={11} strokeWidth={3} />;
           } else if (step.isActive) {
-            iconContainer =
-              "bg-indigo-50 text-indigo-600 border border-indigo-400";
-
-            icon = <Dot size={20} className="animate-pulse" />;
+            iconContainer = "bg-blue-600 text-white ring-4 ring-blue-50";
+            icon = <div className="h-2 w-2 rounded-full bg-white" />;
           }
 
           return (
             <div key={step.title} className="relative">
+              {/* Dot Icon */}
               <div
-                className={`absolute -left-10 top-0.5 flex h-7 w-7 items-center justify-center rounded-full ${iconContainer}`}
+                className={`absolute -left-8.75 top-0 flex h-5 w-5 items-center justify-center rounded-full transition-all duration-300 ${iconContainer}`}
               >
                 {icon}
               </div>
 
               <div>
-                <h5 className="text-xs font-bold text-slate-800">
+                <h5 className="text-xs font-bold text-slate-800 leading-none">
                   {step.title}
                 </h5>
 
-                <p className="mt-0.5 text-[10px] font-medium text-slate-500">
+                <p className="mt-1 text-[10px] font-semibold text-slate-400">
                   {step.description}
                 </p>
               </div>

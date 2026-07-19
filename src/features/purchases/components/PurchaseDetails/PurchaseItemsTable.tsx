@@ -1,7 +1,8 @@
+import { ShoppingBag } from "lucide-react";
 import DataTable from "../../../../components/ui/DataTable/DataTable";
-import { formatCurrency } from "../../../../utils/formatCurrenty";
 import type { Purchase } from "../../types/purchase";
 import { purchaseItemsColumns } from "./purchaseItemsColums";
+import { formatCurrency } from "../../../../utils/formatCurrenty";
 
 interface PurchaseItemsTableProps {
   purchase: Purchase;
@@ -11,9 +12,10 @@ const PurchaseItemsTable = ({ purchase }: PurchaseItemsTableProps) => {
   const items = purchase.items ?? [];
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-xs">
-      <h4 className="mb-5 text-xs font-bold uppercase tracking-wide text-slate-700">
-        Purchase Items
+    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-3xs">
+      <h4 className="mb-4 flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-800">
+        <ShoppingBag size={14} className="text-blue-500" />
+        <span>Purchase Items</span>
       </h4>
 
       <DataTable
@@ -26,11 +28,11 @@ const PurchaseItemsTable = ({ purchase }: PurchaseItemsTableProps) => {
 
       {items.length > 0 && (
         <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-          <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
             Grand Total
           </span>
 
-          <span className="font-mono text-lg font-bold text-indigo-600">
+          <span className="font-sans text-base font-black text-blue-600">
             {formatCurrency(purchase.total_amount)}
           </span>
         </div>
