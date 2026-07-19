@@ -49,10 +49,7 @@ export function calculateReceivedPercentage(
   items: Pick<PurchaseItem, "quantity" | "received_quantity">[],
 ): number {
   const totalQuantity = calculateTotalQuantity(items);
-
   if (totalQuantity === 0) return 0;
-
   const receivedQuantity = calculateReceivedQuantity(items);
-
   return Math.round((receivedQuantity / totalQuantity) * 100);
 }

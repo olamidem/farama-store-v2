@@ -22,4 +22,14 @@ export interface CreatePurchaseItemInput {
   unit_cost: number;
 }
 
+export interface ReceivePurchaseItemInput {
+  purchase_item_id: string;
+  received_quantity: number;
+}
+
+export interface ReceivePurchaseInput {
+  purchaseId: string;
+  receivedItems: ReceivePurchaseItemInput[];
+}
+
 export type UpdatePurchaseItemInput = Partial<CreatePurchaseItemInput>;

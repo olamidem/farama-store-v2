@@ -5,7 +5,7 @@ import {
   createPurchase,
   updatePurchase,
   deletePurchase,
-  receivePurchase,
+  receivePurchaseGoods,
 } from "../services/purchase.service";
 
 import type {
@@ -16,8 +16,7 @@ import type {
 export function useCreatePurchase() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreatePurchaseInput) =>
-      createPurchase(data),
+    mutationFn: (data: CreatePurchaseInput) => createPurchase(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.purchases,
@@ -30,13 +29,8 @@ export function useCreatePurchase() {
 export function useUpdatePurchase() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: UpdatePurchaseInput;
-    }) => updatePurchase(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdatePurchaseInput }) =>
+      updatePurchase(id, data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.purchases,
@@ -60,14 +54,36 @@ export function useDeletePurchase() {
 }
 
 export function useReceivePurchase() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: receivePurchase,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.purchases,
-      });
-      toast.success("Goods received successfully.");
-    },
-  });
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: receivePurchaseGoods,
+
+        onSuccess: async (_, variables) => {
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.purchases,
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.purchase(
+                        variables.purchaseId
+                    ),
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.products,
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey:
+                        QUERY_KEYS.inventoryTransactions,
+                }),
+            ]);
+
+            toast.success(
+                "Goods received successfully."
+            );
+        },
+    });
 }
