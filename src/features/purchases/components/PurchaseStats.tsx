@@ -1,11 +1,6 @@
-import {
-  ShoppingBag,
-  Clock,
-  PackageCheck,
-  CreditCard,
-} from "lucide-react";
-import { usePurchaseStats } from "../hook/usePurchases";
+import { ShoppingBag, Clock, PackageCheck, CreditCard } from "lucide-react";
 import { formatCurrency } from "../../../utils/formatCurrenty";
+import { usePurchaseStats } from "../hook/usePurchases";
 
 export default function PurchaseStats() {
   const { data: stats, isLoading } = usePurchaseStats();
@@ -20,7 +15,7 @@ export default function PurchaseStats() {
     },
     {
       title: "Pending",
-      value: isLoading ? "..." : stats?.pendingOrders ,
+      value: isLoading ? "..." : stats?.pendingOrders,
       label: "Awaiting action",
       icon: Clock,
       iconColor: "text-amber-600",
@@ -28,7 +23,7 @@ export default function PurchaseStats() {
     },
     {
       title: "Received",
-      value: isLoading ? "..." : stats?.receivedOrders ,
+      value: isLoading ? "..." : stats?.receivedOrders,
       label: "Completed",
       icon: PackageCheck,
       iconColor: "text-emerald-600",
@@ -36,10 +31,10 @@ export default function PurchaseStats() {
     },
     {
       title: "Total Purchase Value",
-      value: isLoading ? "..." : formatCurrency(stats?.totalPurchaseValue ?? 0 ),
+      value: isLoading ? "..." : formatCurrency(stats?.totalPurchaseValue ?? 0),
       label: "All time",
       icon: CreditCard,
-      iconColor: "text-purple-600", 
+      iconColor: "text-purple-600",
       bgColor: "bg-purple-50/50",
     },
   ];
@@ -55,7 +50,9 @@ export default function PurchaseStats() {
             className="flex items-center gap-4 bg-white rounded-2xl border border-slate-100 p-5 shadow-3xs hover:shadow-2xs transition-all duration-300"
           >
             {/* Left side: Icon inside shaded rounded container */}
-            <div className={`p-3.5 rounded-xl ${card.bgColor} ${card.iconColor} shrink-0`}>
+            <div
+              className={`p-3.5 rounded-xl ${card.bgColor} ${card.iconColor} shrink-0`}
+            >
               <Icon size={20} className="stroke-[2.2]" />
             </div>
 

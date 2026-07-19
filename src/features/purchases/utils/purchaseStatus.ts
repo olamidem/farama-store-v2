@@ -1,6 +1,8 @@
-import { PURCHASE_STATUS, type PurchaseStatus } from "../constant/purchase.constants";
+import {
+  PURCHASE_STATUS,
+  type PurchaseStatus,
+} from "../constant/purchase.constants";
 import { PURCHASE_STATUS_STYLES } from "../constant/purchaseStatusStyles";
-
 
 const STATUS_TEXT: Record<PurchaseStatus, string> = {
   [PURCHASE_STATUS.PENDING]: "Pending",
