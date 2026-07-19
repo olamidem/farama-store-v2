@@ -1,5 +1,4 @@
 import { supabase } from "../../../api/supabase";
-import { recordInventoryTransaction } from "../../inventory/services/inventory.service";
 import {
   PURCHASE_STATUS,
   type PurchaseStatus,
@@ -23,11 +22,6 @@ export async function getPurchases() {
       *,
       supplier:suppliers(*),
 
-      warehouse:warehouses(
-        id,
-        name
-      ),
-
       items:purchase_items(
         *,
         product:products(*),
@@ -50,6 +44,7 @@ export async function getPurchase(id: string) {
       `
       *,
       supplier:suppliers(*),
+
       items:purchase_items(
         *,
         product:products(*),
@@ -159,15 +154,6 @@ export async function receivePurchaseGoods({
         received_quantity: newReceived,
       })
       .eq("id", item.purchase_item_id);
-
-    await recordInventoryTransaction({
-      product_id: purchaseItem.product_id,
-      product_unit_id: purchaseItem.product_unit_id,
-      transaction_type: "PURCHASE",
-      quantity: item.received_quantity,
-      reason: "Purchase Order",
-      remarks: `Received goods from ${purchaseId}`,
-    });
 
     if (updateError) throw updateError;
   }

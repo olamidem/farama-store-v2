@@ -12,7 +12,12 @@ export async function getCatalogProducts() {
   return data;
 }
 
-export async function getCatalogProductUnits() {
+import type {
+  CatalogProductUnit,
+  CatalogUnit,
+} from "../types/catalogProductUnit";
+
+export async function getCatalogProductUnits(): Promise<CatalogProductUnit[]> {
   const { data, error } = await supabase.from("product_units").select(`
       id,
       product_id,
@@ -26,5 +31,12 @@ export async function getCatalogProductUnits() {
 
   if (error) throw error;
 
-  return data;
+  return (
+    data?.map((item: any) => ({
+      ...item,
+      unit: Array.isArray(item.unit)
+        ? ((item.unit[0] as CatalogUnit) ?? null)
+        : ((item.unit as CatalogUnit) ?? null),
+    })) ?? []
+  );
 }
