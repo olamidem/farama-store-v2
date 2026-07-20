@@ -1,8 +1,4 @@
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
-
-import Input from "../../../../../components/ui/Input";
-import Label from "../../../../../components/ui/Label";
-
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { SupplierFormData } from "../../validations/supplierSchema";
 
 interface SupplierContactInformationProps {
@@ -10,62 +6,63 @@ interface SupplierContactInformationProps {
   errors: FieldErrors<SupplierFormData>;
 }
 
-const SupplierContactInformation = ({
+export default function SupplierContactInformation({
   register,
   errors,
-}: SupplierContactInformationProps) => {
+}: SupplierContactInformationProps) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-2xs">
-      <h3 className="mb-5 text-xs font-extrabold uppercase tracking-wider text-slate-700">
+    <div className="space-y-4 text-left">
+      <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3 border-b border-slate-50 pb-1.5">
         Contact Information
       </h3>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Contact Person */}
-        <div>
-          <Label htmlFor="contact_person" required={false}>
+        <div className="space-y-1.5">
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Contact Person
-          </Label>
-
-          <Input
-            id="contact_person"
+          </label>
+          <input
+            type="text"
             placeholder="e.g. Maria Santos"
             {...register("contact_person")}
-            error={errors.contact_person?.message}
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-hidden focus:bg-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition"
           />
         </div>
 
         {/* Phone */}
-        <div>
-          <Label htmlFor="phone" required={false}>
+        <div className="space-y-1.5">
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Phone Number
-          </Label>
-
-          <Input
-            id="phone"
-            placeholder="e.g. +358 40 123 4567"
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. +63 912 345 6789"
             {...register("phone")}
-            error={errors.phone?.message}
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-hidden focus:bg-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition"
           />
         </div>
 
         {/* Email */}
-        <div>
-          <Label htmlFor="email" required={false}>
+        <div className="space-y-1.5">
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Email Address
-          </Label>
-
-          <Input
-            id="email"
+          </label>
+          <input
             type="email"
             placeholder="e.g. contact@supplier.com"
             {...register("email")}
-            error={errors.email?.message}
+            className={`w-full rounded-xl border bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-hidden focus:bg-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition ${
+              errors.email ? "border-red-500" : "border-slate-200"
+            }`}
           />
+          {errors.email && (
+            <p className="text-red-500 text-[10px] font-semibold mt-1">
+              {errors.email.message}
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
-};
-
-export default SupplierContactInformation;
+}

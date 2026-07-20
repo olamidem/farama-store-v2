@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
+import type { SupplierWithStats, CreateSupplierInput } from "../types/supplier";
 import { useSuppliers } from "../hooks/useSuppliers";
 import {
   useCreateSupplier,
   useUpdateSupplier,
   useDeleteSupplier,
 } from "../hooks/useSupplierMutations";
-import type { SupplierWithStats, CreateSupplierInput } from "../types/supplier";
 import SupplierTable from "../components/SupplierTable";
-import SupplierDetails from "../components/SupplierDetails/SupplierDetails";
-import SupplierForm from "../components/SupplierForm/SupplierForm";
-import DeleteSupplierDialog from "../components/SupplierForm/DeleteSupplierDialog";
 import EmptyState from "../components/EmptyState";
+import SupplierDetails from "../components/supplierDetails/SupplierDetails";
+import SupplierInformation from "../components/SupplierInformation";
+import DeleteSupplierDialog from "../components/supplierForm/DeleteSupplierDialog";
 
 export default function SuppliersPage() {
   const { data: suppliers = [], isLoading, isError, error, refetch } = useSuppliers();
@@ -115,7 +115,7 @@ export default function SuppliersPage() {
       ) : (
         <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden min-h-0">
           {/* Left Column (Supplier Table / List) */}
-          <div className="w-full lg:w-[380px] shrink-0 h-full flex flex-col">
+          <div className="w-full lg:w-95 shrink-0 h-full flex flex-col">
             <SupplierTable
               suppliers={suppliers}
               selectedSupplierId={activeSupplierId}
@@ -152,7 +152,7 @@ export default function SuppliersPage() {
       )}
 
       {/* Form Dialog */}
-      <SupplierForm
+      <SupplierInformation
         isOpen={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
