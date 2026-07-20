@@ -4,7 +4,6 @@ import SupplierInformation from "../SupplierInformation";
 import SupplierStats from "../SupplierStats";
 import SupplierOverview from "../SupplierOverview";
 import SupplierActions from "../SupplierActions";
-import PurchaseHistoryTab from "./PurchaseHistoryTab";
 import ProductsSuppliedTab from "./ProductsSuppliedTab";
 import ActivityTab from "./ActivityTab";
 import OverviewTab from "./OverviewTab";
@@ -13,6 +12,7 @@ import {
   SUPPLIER_TAB_LIST,
   type SupplierTab,
 } from "../../constants/supplierTabs";
+import PurchaseHistoryTab from "./PurchaseHistoryTabs";
 
 interface SupplierDetailsProps {
   supplier: SupplierWithStats;
