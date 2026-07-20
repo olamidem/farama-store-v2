@@ -16,7 +16,7 @@ import PurchaseTimeline from "./PurchaseTimeline";
 import PurchaseActions from "./PurchaseActions";
 import ReceiveGoodsModal from "../PurchaseForm/ReceiveGoodsModal/ReceiveGoodModal";
 import { printPurchaseOrder } from "../../utils/printPurchaseOrder";
-import { useClosePurchase } from "../../hooks/usePurchasesMutations";
+import { useClosePurchase } from "../../hook/usePurchasesMutations";
 
 interface PurchaseOverviewProps {
   purchase: Purchase;

@@ -42,7 +42,7 @@ export const ProductDetailsOverviewHeader = ({
     <div className="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4">
       <div className="relative h-16 w-16 rounded-xl border border-slate-200 bg-white p-1 flex items-center justify-center shadow-inner overflow-hidden shrink-0">
         <div
-          className={`w-full h-full rounded-lg bg-gradient-to-br ${gradientClass} flex items-center justify-center font-black text-2xl select-none`}
+          className={`w-full h-full rounded-lg bg-linear-to-br ${gradientClass} flex items-center justify-center font-black text-2xl select-none`}
         >
           {firstLetter}
         </div>
