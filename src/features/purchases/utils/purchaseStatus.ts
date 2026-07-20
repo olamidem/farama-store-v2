@@ -1,5 +1,5 @@
 import { PURCHASE_STATUS, type PurchaseStatus } from "../constant/purchase.constants";
-import { PURCHASE_STATUS_STYLES } from "../constants/purchaseStatusStyles";
+import { PURCHASE_STATUS_STYLES } from "../constant/purchaseStatusStyles";
 import type { Purchase } from "../types/purchase";
 
 const STATUS_TEXT: Record<PurchaseStatus, string> = {
