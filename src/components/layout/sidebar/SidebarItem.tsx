@@ -6,14 +6,14 @@ const SidebarItem = ({ label, to, icon: Icon }: NavigationItem) => {
     <Link
       to={to}
       activeProps={{
-        className: "bg-blue-50 text-blue-600 font-bold",
+        className: "bg-indigo-600 text-white font-extrabold shadow-sm shadow-indigo-500/10",
       }}
       inactiveProps={{
-        className: "text-slate-900 hover:bg-slate-100 hover:text-slate-900",
+        className: "text-slate-400 hover:bg-slate-800/40 hover:text-slate-100",
       }}
-      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors"
+      className="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200"
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-4 w-4" />
       <span>{label}</span>
     </Link>
   );

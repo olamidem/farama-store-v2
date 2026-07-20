@@ -8,8 +8,8 @@ interface SidebarSectionProps {
 
 const SidebarSection = ({ title, items }: SidebarSectionProps) => {
   return (
-    <div className="space-y-1">
-      <h2 className="px-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+    <div className="space-y-1.5">
+      <h2 className="px-4 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
         {title}
       </h2>
 

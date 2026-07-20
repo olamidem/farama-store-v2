@@ -1,4 +1,5 @@
-const Logo = () => {
+const Logo = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
+  const isDark = theme === "dark";
   return (
     <div className="flex items-center gap-3 group cursor-pointer select-none">
       <div className="relative">
@@ -9,11 +10,15 @@ const Logo = () => {
           FM
         </div>
       </div>
-      <div className="flex flex-col">
-        <span className="font-black text-sm tracking-widest text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
+      <div className="flex flex-col text-left">
+        <span className={`font-black text-sm tracking-widest leading-none transition-colors ${
+          isDark ? "text-white group-hover:text-blue-400" : "text-slate-900 group-hover:text-blue-600"
+        }`}>
           FARAMA STORE
         </span>
-        <span className="text-[9px] font-extrabold text-slate-400 tracking-wider uppercase mt-1">
+        <span className={`text-[9px] font-extrabold tracking-wider uppercase mt-1 ${
+          isDark ? "text-slate-500" : "text-slate-400"
+        }`}>
           Inventory Management System
         </span>
       </div>
