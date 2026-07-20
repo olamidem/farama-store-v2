@@ -6,7 +6,7 @@ export const QUERY_KEYS = {
   suppliers: ["suppliers"],
   units: ["units"],
   productUnits: ["product-units"],
-  inventoryTransactions: ["inventory-transactions"],
+  inventory: ["inventory"],
   purchases: ["purchases"],
   purchase: (id: string) => ["purchase", id],
 } as const;
