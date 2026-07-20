@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Pencil, Sliders, Copy, Barcode, Trash2, Check, Layers, ShoppingBag } from "lucide-react";
+import {
+  Pencil,
+  Sliders,
+  Copy,
+  Barcode,
+  Trash2,
+  Check,
+  Layers,
+  ShoppingBag,
+} from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "../../types/product";
 import { useUnits } from "../../../units/hooks/useUnits";
@@ -85,7 +94,9 @@ export const ProductDetailsOverviewSpecsTable = ({
       <div className="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-xs">
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Product Name</span>
-          <span className="col-span-2 font-extrabold text-slate-900">{product.name}</span>
+          <span className="col-span-2 font-extrabold text-slate-900">
+            {product.name}
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
@@ -98,7 +109,11 @@ export const ProductDetailsOverviewSpecsTable = ({
                 className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer"
                 title="Copy SKU"
               >
-                {copiedSku ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                {copiedSku ? (
+                  <Check size={16} className="text-emerald-500" />
+                ) : (
+                  <Copy size={16} />
+                )}
               </button>
             )}
           </span>
@@ -109,28 +124,40 @@ export const ProductDetailsOverviewSpecsTable = ({
           <span className="col-span-2 font-semibold text-slate-900 font-mono flex items-center gap-2">
             {product.barcode || "6151234567890"}
             <button
-              onClick={() => onCopy(product.barcode || "6151234567890", "barcode")}
+              onClick={() =>
+                onCopy(product.barcode || "6151234567890", "barcode")
+              }
               className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer"
               title="Copy Barcode"
             >
-              {copiedBarcode ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+              {copiedBarcode ? (
+                <Check size={16} className="text-emerald-500" />
+              ) : (
+                <Copy size={16} />
+              )}
             </button>
           </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Category</span>
-          <span className="col-span-2 font-bold text-slate-800">{categoryName}</span>
+          <span className="col-span-2 font-bold text-slate-800">
+            {categoryName}
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Subcategory</span>
-          <span className="col-span-2 font-bold text-slate-800">{subcategory}</span>
+          <span className="col-span-2 font-bold text-slate-800">
+            {subcategory}
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Base Unit</span>
-          <span className="col-span-2 font-bold text-slate-800">{baseUnitDisplay}</span>
+          <span className="col-span-2 font-bold text-slate-800">
+            {baseUnitDisplay}
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
@@ -152,7 +179,9 @@ export const ProductDetailsOverviewSpecsTable = ({
             >
               <span
                 className={`h-1.5 w-1.5 rounded-full ${
-                  product.is_active !== false ? "bg-emerald-500" : "bg-slate-400"
+                  product.is_active !== false
+                    ? "bg-emerald-500"
+                    : "bg-slate-400"
                 }`}
               />
               {product.is_active !== false ? "Active" : "Archived"}
@@ -162,12 +191,16 @@ export const ProductDetailsOverviewSpecsTable = ({
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Tax Rate</span>
-          <span className="col-span-2 font-bold text-slate-800">0% (Vat Exempted)</span>
+          <span className="col-span-2 font-bold text-slate-800">
+            0% (Vat Exempted)
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base hover:bg-slate-50/40 transition duration-150">
           <span className="font-bold text-slate-500">Supplier</span>
-          <span className="col-span-2 font-bold text-slate-800">{supplier}</span>
+          <span className="col-span-2 font-bold text-slate-800">
+            {supplier}
+          </span>
         </div>
 
         <div className="grid grid-cols-3 p-3.5 text-base items-center hover:bg-slate-50/40 transition duration-150">
@@ -213,24 +246,36 @@ export const ProductDetailsOverviewAssetIntelligence = ({
       </h4>
       <div className="space-y-3">
         <div className="flex items-center justify-between text-base">
-          <span className="font-medium text-slate-500">Total Registered Units:</span>
-          <span className="font-extrabold text-slate-800 font-mono">{stock}</span>
+          <span className="font-medium text-slate-500">
+            Total Registered Units:
+          </span>
+          <span className="font-extrabold text-slate-800 font-mono">
+            {stock}
+          </span>
         </div>
         <div className="flex items-center justify-between text-base">
-          <span className="font-medium text-slate-500">Est. Total Stock Value:</span>
+          <span className="font-medium text-slate-500">
+            Est. Total Stock Value:
+          </span>
           <span className="font-bold text-emerald-700 font-mono">
             {formatCurrency(estRetailValue)}
           </span>
         </div>
         <div className="flex items-center justify-between text-base">
-          <span className="font-medium text-slate-500">Est. Total Asset Cost:</span>
+          <span className="font-medium text-slate-500">
+            Est. Total Asset Cost:
+          </span>
           <span className="font-bold text-blue-700 font-mono">
             {formatCurrency(estCostValue)}
           </span>
         </div>
         <div className="flex items-center justify-between text-base">
-          <span className="font-medium text-slate-500">Active Sell Packages:</span>
-          <span className="font-bold text-slate-800">{variantCount} Configured</span>
+          <span className="font-medium text-slate-500">
+            Active Sell Packages:
+          </span>
+          <span className="font-bold text-slate-800">
+            {variantCount} Configured
+          </span>
         </div>
       </div>
 
@@ -334,7 +379,8 @@ export const ProductDetailsOverviewTab = ({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("purchase_items")
-        .select(`
+        .select(
+          `
           unit_cost,
           purchase:purchases (
             purchase_date,
@@ -342,16 +388,20 @@ export const ProductDetailsOverviewTab = ({
               name
             )
           )
-        `)
+        `,
+        )
         .eq("product_id", product.id)
         .order("created_at", { ascending: false })
         .limit(1);
 
       if (error) throw error;
       if (!data || data.length === 0) return null;
-      
+
       const item = data[0];
-      const purchaseData = item.purchase as unknown as { purchase_date?: string; supplier?: { name?: string } | null } | null;
+      const purchaseData = item.purchase as unknown as {
+        purchase_date?: string;
+        supplier?: { name?: string } | null;
+      } | null;
       return {
         price: item.unit_cost,
         supplierName: purchaseData?.supplier?.name || "Unknown Supplier",
@@ -362,15 +412,22 @@ export const ProductDetailsOverviewTab = ({
   });
 
   const baseUnit = units.find((u) => u.id === product.base_unit_id);
-  const baseUnitDisplay = baseUnit ? `${baseUnit.name} (${baseUnit.symbol})` : "Piece (pcs)";
+  const baseUnitDisplay = baseUnit
+    ? `${baseUnit.name} (${baseUnit.symbol})`
+    : "Piece (pcs)";
   const baseUnitSymbol = baseUnit ? baseUnit.symbol : "pcs";
 
   // Generate smart dynamic values based on category
-  const subcategory = categoryName === "Beverages" ? "Soft Drinks" : "General Inventory";
-  const supplier = categoryName === "Beverages" ? "Coca-Cola Beverages Nigeria" : "Farama Main Supplier Ltd";
-  const tags = categoryName === "Beverages"
-    ? ["cold-drink", "soft-drink", "beverage"]
-    : [categoryName.toLowerCase(), "retail", "stock"];
+  const subcategory =
+    categoryName === "Beverages" ? "Soft Drinks" : "General Inventory";
+  const supplier =
+    categoryName === "Beverages"
+      ? "Coca-Cola Beverages Nigeria"
+      : "Farama Main Supplier Ltd";
+  const tags =
+    categoryName === "Beverages"
+      ? ["cold-drink", "soft-drink", "beverage"]
+      : [categoryName.toLowerCase(), "retail", "stock"];
 
   // Value Calculations
   const sellingPrice = product.selling_price || 0;
@@ -402,7 +459,9 @@ export const ProductDetailsOverviewTab = ({
   };
 
   // Avatar text and gradient helper
-  const firstLetter = product.name ? product.name.trim().charAt(0).toUpperCase() : "P";
+  const firstLetter = product.name
+    ? product.name.trim().charAt(0).toUpperCase()
+    : "P";
   const getDisplayColor = (name: string) => {
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -449,9 +508,11 @@ export const ProductDetailsOverviewTab = ({
             Product Description
           </h4>
           <p className="text-base text-slate-600 leading-relaxed bg-slate-50/30 p-4 rounded-2xl border border-slate-100">
-            {product.description || "No custom description available for this item."}
+            {product.description ||
+              "No custom description available for this item."}
             <span className="block mt-2 font-semibold text-sm text-slate-400">
-              Note: This description appears on standard billing registers, variant sheets, and print layouts.
+              Note: This description appears on standard billing registers,
+              variant sheets, and print layouts.
             </span>
           </p>
         </div>
@@ -469,7 +530,9 @@ export const ProductDetailsOverviewTab = ({
                 Last Purchase Price
               </span>
               <span className="block text-sm font-black text-slate-800 font-mono mt-1">
-                {lastPurchase?.price ? formatCurrency(lastPurchase.price) : "N/A"}
+                {lastPurchase?.price
+                  ? formatCurrency(lastPurchase.price)
+                  : "N/A"}
               </span>
             </div>
 
@@ -477,7 +540,10 @@ export const ProductDetailsOverviewTab = ({
               <span className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                 Last Supplier
               </span>
-              <span className="block text-sm font-black text-slate-800 mt-1 truncate" title={lastPurchase?.supplierName}>
+              <span
+                className="block text-sm font-black text-slate-800 mt-1 truncate"
+                title={lastPurchase?.supplierName}
+              >
                 {lastPurchase?.supplierName || "N/A"}
               </span>
             </div>
@@ -487,8 +553,12 @@ export const ProductDetailsOverviewTab = ({
                 Last Purchase Date
               </span>
               <span className="block text-sm font-black text-slate-800 mt-1">
-                {lastPurchase?.purchaseDate && lastPurchase.purchaseDate !== "N/A"
-                  ? new Date(lastPurchase.purchaseDate).toLocaleDateString("en-US", { dateStyle: "medium" })
+                {lastPurchase?.purchaseDate &&
+                lastPurchase.purchaseDate !== "N/A"
+                  ? new Date(lastPurchase.purchaseDate).toLocaleDateString(
+                      "en-US",
+                      { dateStyle: "medium" },
+                    )
                   : "N/A"}
               </span>
             </div>
@@ -528,7 +598,8 @@ export const ProductDetailsOverviewTab = ({
                         {u?.name || "Pack Unit"} ({u?.symbol || "pk"})
                       </span>
                       <span className="text-xs text-slate-500 font-semibold block">
-                        1 {u?.symbol || "unit"} = {pu.conversion_factor} {baseUnitSymbol}
+                        1 {u?.symbol || "unit"} = {pu.conversion_factor}{" "}
+                        {baseUnitSymbol}
                       </span>
                     </div>
                     <div className="text-right">
