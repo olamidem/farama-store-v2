@@ -1,6 +1,6 @@
 import { Search, SlidersHorizontal, Download, Calendar } from "lucide-react";
 import type { Supplier } from "../types/supplier";
-import { useSuppliers } from "../hooks/usePurchases";
+import { useSuppliers } from "../hook/usePurchases";
 
 interface PurchaseFiltersProps {
   search: string;

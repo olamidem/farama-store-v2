@@ -70,7 +70,7 @@ const PurchaseTableSkeleton = () => {
 };
 
 const PurchaseTable = ({
-  purchases,
+  purchases = [],
   isLoading,
   onView,
   onEdit,
@@ -82,8 +82,9 @@ const PurchaseTable = ({
 
   const paginatedPurchases = useMemo(() => {
     const start = (page - 1) * pageSize;
+    const safePurchases = purchases || [];
 
-    return purchases.slice(start, start + pageSize);
+    return safePurchases.slice(start, start + pageSize);
   }, [purchases, page, pageSize]);
 
   const columns = useMemo(
@@ -101,6 +102,8 @@ const PurchaseTable = ({
     return <PurchaseTableSkeleton />;
   }
 
+  const safePurchasesCount = (purchases || []).length;
+
   return (
     <div className="space-y-5">
       <DataTable
@@ -111,11 +114,11 @@ const PurchaseTable = ({
         emptyDescription="Create your first purchase order to get started."
       />
 
-      {!isLoading && purchases.length > 0 && (
+      {!isLoading && safePurchasesCount > 0 && (
         <Pagination
           page={page}
           pageSize={pageSize}
-          totalItems={purchases.length}
+          totalItems={safePurchasesCount}
           onPageChange={setPage}
           onPageSizeChange={(size) => {
             setPageSize(size);

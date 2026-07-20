@@ -12,6 +12,7 @@ export function usePurchases() {
   return useQuery({
     queryKey: QUERY_KEYS.purchases,
     queryFn: getPurchases,
+    initialData: [],
   });
 }
 
