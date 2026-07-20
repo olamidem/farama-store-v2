@@ -6,8 +6,6 @@ export const supplierSchema = z.object({
   phone: z.string().optional().or(z.literal("")),
   address: z.string().optional().or(z.literal("")),
   contact_person: z.string().optional().or(z.literal("")),
-  payment_terms: z.string(),
-  status: z.enum(["Active", "Inactive"]),
   remarks_text: z.string().optional().or(z.literal("")),
 });
 

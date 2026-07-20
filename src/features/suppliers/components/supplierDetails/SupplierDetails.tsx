@@ -78,18 +78,6 @@ export default function SupplierDetails({
               <h2 className="text-2xl font-black text-slate-900 tracking-tight truncate">
                 {supplier.name}
               </h2>
-              <span
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold border ${
-                  supplier.status === "Active"
-                    ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                    : "bg-slate-50 text-slate-500 border-slate-200"
-                }`}
-              >
-                <span
-                  className={`h-1.5 w-1.5 rounded-full ${supplier.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}
-                />
-                {supplier.status}
-              </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-semibold truncate max-w-md">
               {supplier.remarks_text || "Food and beverage supplier"}

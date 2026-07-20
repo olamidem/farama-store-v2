@@ -12,7 +12,6 @@ import type {
 } from "../../types/supplier";
 import SupplierBasicInformation from "./SupplierBasicInformation";
 import SupplierContactInformation from "./SupplierContactInformation";
-import SupplierAddressInformation from "./SupplierAddressInformation";
 import SupplierNotes from "./SupplierNotes";
 import { serializeSupplierRemarks } from "../../utils/supplierHelpers";
 
@@ -44,8 +43,6 @@ export default function SupplierForm({
       phone: "",
       address: "",
       contact_person: "",
-      payment_terms: "Net 30",
-      status: "Active",
       remarks_text: "",
     },
   });
@@ -60,8 +57,6 @@ export default function SupplierForm({
           phone: supplier.phone || "",
           address: supplier.address || "",
           contact_person: supplier.contact_person || "",
-          payment_terms: supplier.payment_terms || "Net 30",
-          status: supplier.status || "Active",
           remarks_text: supplier.remarks_text || "",
         });
       } else {
@@ -71,8 +66,6 @@ export default function SupplierForm({
           phone: "",
           address: "",
           contact_person: "",
-          payment_terms: "Net 30",
-          status: "Active",
           remarks_text: "",
         });
       }
@@ -86,8 +79,6 @@ export default function SupplierForm({
     const remarks = serializeSupplierRemarks(
       data.remarks_text || "",
       data.contact_person || "",
-      data.payment_terms || "Net 30",
-      data.status || "Active",
     );
 
     const payload: CreateSupplierInput = {
@@ -163,9 +154,6 @@ export default function SupplierForm({
 
           {/* Contact Section */}
           <SupplierContactInformation register={register} errors={errors} />
-
-          {/* Address Section */}
-          <SupplierAddressInformation register={register} />
 
           {/* Notes Section */}
           <SupplierNotes register={register} />

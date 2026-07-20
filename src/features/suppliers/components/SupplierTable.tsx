@@ -27,11 +27,7 @@ export default function SupplierTable({
       supplier.name.toLowerCase().includes(search.toLowerCase()) ||
       (supplier.address || "").toLowerCase().includes(search.toLowerCase()) ||
       (supplier.email || "").toLowerCase().includes(search.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "All" || supplier.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch ;
   });
 
   // Helper to generate initials and color

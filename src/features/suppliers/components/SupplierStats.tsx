@@ -1,5 +1,6 @@
-import { ShoppingCart, DollarSign, Clock, Package } from "lucide-react";
+import { ShoppingCart, Clock, Package, Wallet } from "lucide-react";
 import type { SupplierWithStats } from "../types/supplier";
+import { formatCurrency } from "../../../utils/formatCurrenty";
 
 interface SupplierStatsProps {
   supplier: SupplierWithStats;
@@ -7,13 +8,7 @@ interface SupplierStatsProps {
 
 export default function SupplierStats({ supplier }: SupplierStatsProps) {
   // Format currency (PHP as shown in the mockup ₱ or standard locale)
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(value);
-  };
-
+ 
   const stats = [
     {
       label: "Total Purchases",
@@ -26,7 +21,7 @@ export default function SupplierStats({ supplier }: SupplierStatsProps) {
       label: "Total Spend",
       value: formatCurrency(supplier.totalSpend),
       subtext: "All time",
-      icon: DollarSign,
+      icon: Wallet,
       iconBg: "bg-emerald-50 text-emerald-600",
     },
     {

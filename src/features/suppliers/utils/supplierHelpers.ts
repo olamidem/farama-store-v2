@@ -42,13 +42,9 @@ export function parseSupplierRemarks(remarksStr: string | undefined): {
 export function serializeSupplierRemarks(
   remarks_text: string,
   contact_person: string,
-  payment_terms: string,
-  status: "Active" | "Inactive",
 ): string {
   const payload = {
     contact_person,
-    payment_terms,
-    status,
     remarks_text,
   };
   return JSON.stringify(payload);

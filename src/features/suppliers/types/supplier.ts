@@ -11,8 +11,6 @@ export interface Supplier {
 
 export interface SupplierWithStats extends Supplier {
   contact_person: string;
-  payment_terms: string;
-  status: "Active" | "Inactive";
   remarks_text: string;
 
   // Computed stats

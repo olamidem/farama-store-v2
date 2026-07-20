@@ -25,7 +25,7 @@ export default function SupplierOverview({ supplier }: SupplierOverviewProps) {
     },
     {
       label: "Payment Terms",
-      value: supplier.payment_terms || "Net 30",
+      value: "000",
       subtext: "30 days payment window",
       icon: CreditCard,
     },
