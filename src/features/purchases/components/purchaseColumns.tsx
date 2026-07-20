@@ -2,8 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import type { Purchase } from "../types/purchase";
 import { getStatusBadgeStyle, formatStatusText } from "../utils/purchaseStatus";
-import { formatDate } from "../../../utils/formatDate";
-import { formatCurrency } from "../../../utils/formatCurrenty";
 
 interface ColumnOptions {
   onView: (purchase: Purchase) => void;
@@ -16,6 +14,27 @@ export const createPurchaseColumns = ({
   onEdit,
   onDelete,
 }: ColumnOptions & { isCompact?: boolean }): ColumnDef<Purchase>[] => {
+  const formatNaira = (amount: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
   return [
     {
       accessorKey: "purchase_number",
@@ -52,7 +71,7 @@ export const createPurchaseColumns = ({
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide uppercase border ${getStatusBadgeStyle(
-              status,
+              status
             )}`}
           >
             {formatStatusText(status)}
@@ -66,7 +85,7 @@ export const createPurchaseColumns = ({
       cell: ({ row }) => {
         return (
           <span className="font-sans text-xs font-extrabold text-slate-800">
-            {formatCurrency(row.original.total_amount)}
+            {formatNaira(row.original.total_amount)}
           </span>
         );
       },
@@ -95,10 +114,7 @@ export const createPurchaseColumns = ({
         }
 
         return (
-          <div
-            className="flex items-center gap-2.5 max-w-28"
-            id={`pct-col-${row.original.id}`}
-          >
+          <div className="flex items-center gap-2.5 max-w-28" id={`pct-col-${row.original.id}`}>
             <span className="text-[10px] font-extrabold text-slate-600 min-w-8">
               {pct}%
             </span>
@@ -135,22 +151,16 @@ export const createPurchaseColumns = ({
             >
               <Edit size={14} />
             </button>
-            <button
-              onClick={() => {
-                if (
-                  window.confirm(
-                    "Are you sure you want to delete this purchase order?",
-                  )
-                ) {
-                  onDelete(p.id);
-                }
-              }}
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 cursor-pointer transition"
-              title="Delete PO"
-              id={`btn-delete-${p.id}`}
-            >
-              <Trash2 size={14} />
-            </button>
+            {p.status === "PENDING" && (
+              <button
+                onClick={() => onDelete(p.id)}
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 cursor-pointer transition"
+                title="Delete PO"
+                id={`btn-delete-${p.id}`}
+              >
+                <Trash2 size={14} />
+              </button>
+            )}
           </div>
         );
       },

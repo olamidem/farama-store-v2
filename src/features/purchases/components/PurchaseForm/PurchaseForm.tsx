@@ -9,10 +9,12 @@ import PurchaseItemsTable from "./PurchaseItemsTable";
 import PurchaseSummary from "./PurchaseSummary";
 import type { ItemRowValue } from "./PurchaseItemRow";
 import { getToday, getFutureDate } from "../../utils/date";
-import { useCreatePurchase } from "../../hook/usePurchasesMutations";
+import type { Purchase } from "../../types/purchase";
+import { useCreatePurchase, useUpdatePurchase } from "../../hook/usePurchasesMutations";
 import { useCatalogProducts, useCatalogProductUnits } from "../../hook/useCatalog";
 
 interface PurchaseFormProps {
+  purchase?: Purchase;
   onSuccess?: () => void;
   onCancel?: () => void;
   isModal?: boolean;
@@ -26,6 +28,7 @@ const createEmptyItem = (): ItemRowValue => ({
 });
 
 const PurchaseForm = ({
+  purchase,
   onSuccess,
   onCancel,
   isModal = false,
@@ -33,26 +36,30 @@ const PurchaseForm = ({
   const router = useRouter();
 
   const createPurchaseMutation = useCreatePurchase();
-
-  const { data: products = [], isLoading: loadingProducts } =
-    useCatalogProducts();
-
-  const { data: productUnits = [], isLoading: loadingUnits } =
-    useCatalogProductUnits();
+  const updatePurchaseMutation = useUpdatePurchase();
+  const { data: products = [], isLoading: loadingProducts } = useCatalogProducts();
+  const { data: productUnits = [], isLoading: loadingUnits } = useCatalogProductUnits();
 
   const isCatalogLoading = loadingProducts || loadingUnits;
 
   // Form State
-  const [supplierId, setSupplierId] = useState("");
-  const [remarks, setRemarks] = useState("");
+  const [supplierId, setSupplierId] = useState(purchase?.supplier_id ?? "");
+  const [remarks, setRemarks] = useState(purchase?.remarks ?? "");
 
-  const [purchaseDate, setPurchaseDate] = useState(getToday());
+  const [purchaseDate, setPurchaseDate] = useState(purchase?.purchase_date ?? getToday());
 
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState(
-    getFutureDate(5),
+    purchase?.expected_delivery_date ?? getFutureDate(5),
   );
 
-  const [items, setItems] = useState<ItemRowValue[]>([createEmptyItem()]);
+  const [items, setItems] = useState<ItemRowValue[]>(
+    purchase?.items?.map((item) => ({
+      product_id: item.product_id,
+      product_unit_id: item.product_unit_id,
+      quantity: item.quantity,
+      cost_price: item.unit_cost,
+    })) ?? [createEmptyItem()]
+  );
 
   const handleItemChange = (index: number, updated: Partial<ItemRowValue>) => {
     setItems((previous) => {
@@ -100,18 +107,36 @@ const PurchaseForm = ({
     }
 
     try {
-      await createPurchaseMutation.mutateAsync({
-        supplier_id: supplierId,
-        purchase_date: purchaseDate,
-        expected_delivery_date: expectedDeliveryDate,
-        remarks,
-        items: validItems.map((item) => ({
-          product_id: item.product_id,
-          product_unit_id: item.product_unit_id,
-          quantity: item.quantity,
-          unit_cost: item.cost_price,
-        })),
-      });
+      if (purchase) {
+        await updatePurchaseMutation.mutateAsync({
+          id: purchase.id,
+          data: {
+            supplier_id: supplierId,
+            purchase_date: purchaseDate,
+            expected_delivery_date: expectedDeliveryDate,
+            remarks,
+            items: validItems.map((item) => ({
+              product_id: item.product_id,
+              product_unit_id: item.product_unit_id,
+              quantity: item.quantity,
+              unit_cost: item.cost_price,
+            })),
+          },
+        });
+      } else {
+        await createPurchaseMutation.mutateAsync({
+          supplier_id: supplierId,
+          purchase_date: purchaseDate,
+          expected_delivery_date: expectedDeliveryDate,
+          remarks,
+          items: validItems.map((item) => ({
+            product_id: item.product_id,
+            product_unit_id: item.product_unit_id,
+            quantity: item.quantity,
+            unit_cost: item.cost_price,
+          })),
+        });
+      }
 
       if (onSuccess) {
         onSuccess();
@@ -125,7 +150,7 @@ const PurchaseForm = ({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to create purchase order.",
+          : "Failed to save purchase order.",
       );
     }
   };
@@ -148,8 +173,8 @@ const PurchaseForm = ({
           </div>
 
           <PageHeader
-            title="Create Purchase Order"
-            description="Create a new purchase order for your supplier."
+            title={purchase ? "Edit Purchase Order" : "Create Purchase Order"}
+            description={purchase ? "Modify details of the pending purchase order." : "Create a new purchase order for your supplier."}
           />
         </>
       )}
@@ -182,7 +207,8 @@ const PurchaseForm = ({
           setExpectedDeliveryDate={setExpectedDeliveryDate}
           remarks={remarks}
           setRemarks={setRemarks}
-          isSubmitting={createPurchaseMutation.isPending}
+          isSubmitting={purchase ? updatePurchaseMutation.isPending : createPurchaseMutation.isPending}
+          buttonText={purchase ? "Save Changes" : "Create Purchase Order"}
           onCancel={
             onCancel ??
             (() =>

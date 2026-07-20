@@ -9,6 +9,9 @@ interface PurchaseFiltersProps {
   setSupplierId: (val: string) => void;
   status: string;
   setStatus: (val: string) => void;
+  dateFilter: string;
+  setDateFilter: (val: string) => void;
+  onFilterClick: () => void;
   onExport?: () => void;
 }
 
@@ -19,6 +22,9 @@ export const PurchaseFilters = ({
   setSupplierId,
   status,
   setStatus,
+  dateFilter,
+  setDateFilter,
+  onFilterClick,
   onExport,
 }: PurchaseFiltersProps) => {
   const { data: suppliers = [] } = useSuppliers();
@@ -72,18 +78,29 @@ export const PurchaseFilters = ({
           </select>
         </div>
 
-        {/* Date Filter Indicator */}
-        <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 bg-white text-xs font-semibold text-slate-500 cursor-pointer hover:bg-slate-50">
-          <span className="flex items-center gap-2">
-            <Calendar size={14} className="text-slate-400" />
-            <span>All Dates</span>
+        {/* Date Filter Dropdown */}
+        <div className="relative">
+          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+            <Calendar size={14} />
           </span>
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-600 font-semibold cursor-pointer transition appearance-none"
+          >
+            <option value="all">All Dates</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="last7">Last 7 Days</option>
+            <option value="last30">Last 30 Days</option>
+          </select>
         </div>
       </div>
 
       {/* Filter and Export buttons */}
       <div className="flex flex-wrap items-center justify-end gap-2 shrink-0">
         <button
+          onClick={onFilterClick}
           type="button"
           className="flex items-center gap-1.5 px-4.5 py-2 text-xs border border-slate-200 bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 cursor-pointer shadow-3xs hover:text-slate-800 transition"
         >

@@ -6,6 +6,7 @@ import {
   updatePurchase,
   deletePurchase,
   receivePurchaseGoods,
+  closePurchase,
 } from "../services/purchase.service";
 
 import type {
@@ -74,11 +75,35 @@ export function useReceivePurchase() {
         }),
 
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.inventoryTransactions,
+          queryKey: QUERY_KEYS.inventory,
         }),
       ]);
 
       toast.success("Goods received successfully.");
+    },
+  });
+}
+
+export function useClosePurchase() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => closePurchase(id),
+    onSuccess: async (_, id) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.purchases,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [...QUERY_KEYS.purchases, id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.products,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.inventory,
+        }),
+      ]);
+      toast.success("Purchase order closed successfully.");
     },
   });
 }
