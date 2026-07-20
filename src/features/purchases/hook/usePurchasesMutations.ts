@@ -6,6 +6,7 @@ import {
   updatePurchase,
   deletePurchase,
   receivePurchaseGoods,
+  closePurchase,
 } from "../services/purchase.service";
 
 import type {
@@ -54,31 +55,57 @@ export function useDeletePurchase() {
 }
 
 export function useReceivePurchase() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: receivePurchaseGoods,
+
+        onSuccess: async (_, variables) => {
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.purchases,
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey: [...QUERY_KEYS.purchases, variables.purchaseId],
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.products,
+                }),
+
+                queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.inventory,
+                }),
+            ]);
+
+            toast.success(
+                "Goods received successfully."
+            );
+        },
+    });
+}
+
+export function useClosePurchase() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: receivePurchaseGoods,
-
-    onSuccess: async (_, variables) => {
+    mutationFn: (id: string) => closePurchase(id),
+    onSuccess: async (_, id) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.purchases,
         }),
-
         queryClient.invalidateQueries({
-          queryKey: [...QUERY_KEYS.purchases, variables.purchaseId],
+          queryKey: [...QUERY_KEYS.purchases, id],
         }),
-
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.products,
         }),
-
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.inventoryTransactions,
+          queryKey: QUERY_KEYS.inventory,
         }),
       ]);
-
-      toast.success("Goods received successfully.");
+      toast.success("Purchase order closed successfully.");
     },
   });
 }
