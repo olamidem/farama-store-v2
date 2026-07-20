@@ -1,31 +1,45 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
-import type { SupplierWithStats, CreateSupplierInput } from "../types/supplier";
 import { useSuppliers } from "../hooks/useSuppliers";
 import {
   useCreateSupplier,
   useUpdateSupplier,
   useDeleteSupplier,
 } from "../hooks/useSupplierMutations";
+import type { SupplierWithStats, CreateSupplierInput } from "../types/supplier";
 import SupplierTable from "../components/SupplierTable";
 import EmptyState from "../components/EmptyState";
 import SupplierDetails from "../components/supplierDetails/SupplierDetails";
-import SupplierInformation from "../components/SupplierInformation";
+import SupplierForm from "../components/supplierForm/SupplierForm";
 import DeleteSupplierDialog from "../components/supplierForm/DeleteSupplierDialog";
 
 export default function SuppliersPage() {
-  const { data: suppliers = [], isLoading, isError, error, refetch } = useSuppliers();
+  const {
+    data: suppliers = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useSuppliers();
 
   const createSupplierMutation = useCreateSupplier();
   const updateSupplierMutation = useUpdateSupplier();
   const deleteSupplierMutation = useDeleteSupplier();
-  const [selectedSupplierId, setSelectedSupplierId] = useState<string | undefined>(undefined);
+
+  const [selectedSupplierId, setSelectedSupplierId] = useState<
+    string | undefined
+  >(undefined);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingSupplier, setEditingSupplier] = useState<SupplierWithStats | undefined>(undefined);
-  const [deletingSupplier, setDeletingSupplier] = useState<SupplierWithStats | undefined>(undefined);
+  const [editingSupplier, setEditingSupplier] = useState<
+    SupplierWithStats | undefined
+  >(undefined);
+  const [deletingSupplier, setDeletingSupplier] = useState<
+    SupplierWithStats | undefined
+  >(undefined);
 
   // Derived state to avoid synchronous state setting in useEffect
-  const activeSupplierId = selectedSupplierId || (suppliers.length > 0 ? suppliers[0].id : undefined);
+  const activeSupplierId =
+    selectedSupplierId || (suppliers.length > 0 ? suppliers[0].id : undefined);
   const selectedSupplier = suppliers.find((s) => s.id === activeSupplierId);
 
   const handleCreateSubmit = async (payload: CreateSupplierInput) => {
@@ -83,9 +97,13 @@ export default function SuppliersPage() {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-100 bg-red-50/50 p-8 text-center max-w-xl mx-auto my-12">
-        <h3 className="text-sm font-bold text-red-900">Failed to load suppliers</h3>
+        <h3 className="text-sm font-bold text-red-900">
+          Failed to load suppliers
+        </h3>
         <p className="text-xs text-red-600 mt-2">
-          {error instanceof Error ? error.message : "An unexpected error occurred while loading data."}
+          {error instanceof Error
+            ? error.message
+            : "An unexpected error occurred while loading data."}
         </p>
         <button
           onClick={() => refetch()}
@@ -143,7 +161,8 @@ export default function SuppliersPage() {
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-center p-8">
                 <p className="text-xs text-slate-400 italic">
-                  Select a supplier from the list on the left to review metrics and history.
+                  Select a supplier from the list on the left to review metrics
+                  and history.
                 </p>
               </div>
             )}
@@ -152,7 +171,7 @@ export default function SuppliersPage() {
       )}
 
       {/* Form Dialog */}
-      <SupplierInformation
+      <SupplierForm
         isOpen={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
@@ -160,7 +179,9 @@ export default function SuppliersPage() {
         }}
         onSubmit={editingSupplier ? handleEditSubmit : handleCreateSubmit}
         supplier={editingSupplier}
-        isPending={createSupplierMutation.isPending || updateSupplierMutation.isPending}
+        isPending={
+          createSupplierMutation.isPending || updateSupplierMutation.isPending
+        }
       />
 
       {/* Delete Confirmation Dialog */}
