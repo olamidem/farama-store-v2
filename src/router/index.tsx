@@ -14,6 +14,7 @@ import UnitsPage from "../pages/UnitsPage";
 import ProductDetailsPage from "../features/products/details/ProductDetailsPage";
 import InventoryPage from "../pages/InventoryPage";
 import PurchasesPage from "../features/purchases/pages/PurchasesPage";
+import SuppliersPage from "../features/suppliers/pages/SuppliersPage";
 
 const rootRoute = createRootRoute();
 const loginRoute = createRoute({
@@ -71,6 +72,12 @@ const purchasesRoute = createRoute({
   component: PurchasesPage,
 });
 
+const suppliersRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/suppliers",
+  component: SuppliersPage,
+});
+
 /**
  * Route Tree
  */
@@ -83,7 +90,8 @@ const routeTree = rootRoute.addChildren([
     unitsRoute,
     inventoryRoute,
     productDetailsRoute,
-    purchasesRoute
+    purchasesRoute,
+    suppliersRoute
   ]),
 ]);
 

@@ -11,6 +11,7 @@ import {
   Scale,
   Users,
   UserCog,
+  Truck,
 } from "lucide-react";
 
 export const navigation = [
@@ -52,6 +53,11 @@ export const navigation = [
         label: "Categories",
         to: "/categories",
         icon: Tags,
+      },
+      {
+        label: "Suppliers",
+        to: "/suppliers",
+        icon: Truck,
       },
       {
         label: "Customers",
