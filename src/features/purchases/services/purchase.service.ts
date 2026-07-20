@@ -102,14 +102,57 @@ export async function createPurchase(input: CreatePurchaseInput) {
 }
 
 export async function updatePurchase(id: string, input: UpdatePurchaseInput) {
-  const { data, error } = await supabase
+  let total_amount = undefined;
+  if (input.items) {
+    total_amount = input.items.reduce(
+      (sum, item) => sum + item.quantity * item.unit_cost,
+      0,
+    );
+  }
+
+  const updateData: Record<string, unknown> = {
+    supplier_id: input.supplier_id,
+    purchase_date: input.purchase_date,
+    expected_delivery_date: input.expected_delivery_date,
+    remarks: input.remarks,
+    status: input.status,
+  };
+  if (total_amount !== undefined) {
+    updateData.total_amount = total_amount;
+  }
+
+  const { data: purchase, error } = await supabase
     .from("purchases")
-    .update(input)
+    .update(updateData)
     .eq("id", id)
     .select()
     .single();
+
   if (error) throw error;
-  return data;
+
+  if (input.items) {
+    const { error: deleteError } = await supabase
+      .from("purchase_items")
+      .delete()
+      .eq("purchase_id", id);
+    if (deleteError) throw deleteError;
+
+    const itemsToInsert = input.items.map((item) => ({
+      purchase_id: id,
+      product_id: item.product_id,
+      product_unit_id: item.product_unit_id,
+      quantity: item.quantity,
+      unit_cost: item.unit_cost,
+      total_cost: item.quantity * item.unit_cost,
+    }));
+
+    const { error: insertError } = await supabase
+      .from("purchase_items")
+      .insert(itemsToInsert);
+    if (insertError) throw insertError;
+  }
+
+  return purchase;
 }
 
 export async function deletePurchase(id: string) {
@@ -124,6 +167,24 @@ export async function receivePurchaseGoods({
   if (!receivedItems.length) {
     throw new Error("No items supplied.");
   }
+
+  /**
+   * Fetch purchase order details first to get the purchase order number
+   */
+  const { data: purchase, error: purchaseGetError } = await supabase
+    .from("purchases")
+    .select("purchase_number")
+    .eq("id", purchaseId)
+    .single();
+
+  if (purchaseGetError) throw purchaseGetError;
+  const purchaseNumber = purchase?.purchase_number || `PO-${purchaseId.substring(0, 8)}`;
+
+  /**
+   * Get current authenticated user
+   */
+  const { data: { user } } = await supabase.auth.getUser();
+  const createdBy = user ? user.id : null;
 
   /**
    * Update received quantity for each purchase item
@@ -156,6 +217,77 @@ export async function receivePurchaseGoods({
       .eq("id", item.purchase_item_id);
 
     if (updateError) throw updateError;
+
+    /**
+     * Automatically update stock quantity on the product table
+     */
+    // 1. Fetch the product unit's conversion factor
+    const { data: productUnit, error: puErr } = await supabase
+      .from("product_units")
+      .select("conversion_factor")
+      .eq("id", purchaseItem.product_unit_id)
+      .single();
+
+    if (puErr) throw puErr;
+    const conversionFactor = productUnit?.conversion_factor || 1;
+
+    // 2. Compute the base unit stock change
+    const baseStockChange = item.received_quantity * conversionFactor;
+
+    // 3. Fetch the product's current stock
+    const { data: product, error: prodErr } = await supabase
+      .from("products")
+      .select("stock")
+      .eq("id", purchaseItem.product_id)
+      .single();
+
+    if (prodErr) throw prodErr;
+    const currentStock = product?.stock || 0;
+    const newStock = currentStock + baseStockChange;
+
+    // 4. Update the stock quantity on the product table
+    const { error: updateProductError } = await supabase
+      .from("products")
+      .update({ stock: newStock })
+      .eq("id", purchaseItem.product_id);
+
+    if (updateProductError) throw updateProductError;
+
+    // 5. Insert an inventory transaction log entry
+    try {
+      const transactionPayload: {
+        product_id: string;
+        product_unit_id: string;
+        quantity: number;
+        balance_after: number;
+        transaction_type: string;
+        reference: string;
+        remarks: string;
+        created_by?: string | null;
+      } = {
+        product_id: purchaseItem.product_id,
+        product_unit_id: purchaseItem.product_unit_id,
+        quantity: baseStockChange,
+        balance_after: newStock,
+        transaction_type: "PURCHASE",
+        reference: purchaseNumber,
+        remarks: `Goods received for PO ${purchaseNumber}`,
+      };
+
+      if (createdBy) {
+        transactionPayload.created_by = createdBy;
+      }
+
+      const { error: txErr } = await supabase
+        .from("inventory_transactions")
+        .insert(transactionPayload);
+
+      if (txErr) {
+        console.warn("Failed to log inventory transaction due to RLS or constraints:", txErr);
+      }
+    } catch (err) {
+      console.warn("Error logging inventory transaction:", err);
+    }
   }
 
   /**
@@ -197,6 +329,17 @@ export async function receivePurchaseGoods({
   if (purchaseError) throw purchaseError;
 
   return await getPurchase(purchaseId);
+}
+
+export async function closePurchase(id: string) {
+  const { data, error } = await supabase
+    .from("purchases")
+    .update({ status: PURCHASE_STATUS.CLOSED })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Purchase;
 }
 
 export async function getPurchaseStats(): Promise<PurchaseStats> {
