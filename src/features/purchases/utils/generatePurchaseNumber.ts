@@ -6,5 +6,6 @@ export async function generatePurchaseNumber() {
     .select("*", { count: "exact", head: true });
   if (error) throw error;
   const nextNumber = (count ?? 0) + 1;
-  return `PO-${String(nextNumber).padStart(6, "0")}`;
+  const currentYear = new Date().getFullYear();
+  return `PO_${currentYear}_${String(nextNumber).padStart(4, "0")}`;
 }
