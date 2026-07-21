@@ -43,6 +43,7 @@ export interface RecordInventoryTransactionInput {
   product_unit_id: string;
   transaction_type: InventoryTransactionType;
   quantity: number;
+  reference: string;
   reason: string;
   remarks?: string;
 }
