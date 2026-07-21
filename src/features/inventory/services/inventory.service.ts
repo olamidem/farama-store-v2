@@ -13,10 +13,13 @@ import type {
 /**
  * Fetch list of inventory transactions with relations (product, product_unit, and creator profile)
  */
-export const getInventoryTransactions = async (): Promise<InventoryTransactionWithRelations[]> => {
+export const getInventoryTransactions = async (): Promise<
+  InventoryTransactionWithRelations[]
+> => {
   const { data, error } = await supabase
     .from("inventory_transactions")
-    .select(`
+    .select(
+      `
       *,
       product:products(id, name, sku, barcode),
       product_unit:product_units(
@@ -25,7 +28,8 @@ export const getInventoryTransactions = async (): Promise<InventoryTransactionWi
         conversion_factor,
         unit:units(name, symbol)
       )
-    `)
+    `,
+    )
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -34,27 +38,40 @@ export const getInventoryTransactions = async (): Promise<InventoryTransactionWi
 
   // Map and fill creator profile names since client auth profiles can be tricky
   // We'll also fetch the current user's details to match user IDs if possible
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const formatted = (data || []).map((tx: { created_by: string | null; profiles?: { raw_user_meta_data?: { name?: string } } | null } & Record<string, unknown>) => {
-    let userName = "System Admin";
-    if (user && tx.created_by === user.id) {
-      userName = user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Admin User";
-    } else if (tx.created_by) {
-      // General fallback or try to read raw data
-      userName = tx.profiles?.raw_user_meta_data?.name || "Admin User";
-    }
+  const formatted = (data || []).map(
+    (
+      tx: {
+        created_by: string | null;
+        profiles?: { raw_user_meta_data?: { name?: string } } | null;
+      } & Record<string, unknown>,
+    ) => {
+      let userName = "System Admin";
+      if (user && tx.created_by === user.id) {
+        userName =
+          user.user_metadata?.name ||
+          user.user_metadata?.full_name ||
+          user.email?.split("@")[0] ||
+          "Admin User";
+      } else if (tx.created_by) {
+        // General fallback or try to read raw data
+        userName = tx.profiles?.raw_user_meta_data?.name || "Admin User";
+      }
 
-    return {
-      ...tx,
-      profiles: {
-        raw_user_meta_data: {
-          name: userName,
+      return {
+        ...tx,
+        profiles: {
+          raw_user_meta_data: {
+            name: userName,
+          },
+          email: user?.email,
         },
-        email: user?.email,
-      },
-    } as InventoryTransactionWithRelations;
-  });
+      } as InventoryTransactionWithRelations;
+    },
+  );
 
   return formatted;
 };
@@ -88,11 +105,21 @@ export const getInventorySummary = async (): Promise<InventorySummary> => {
     throwSupabaseError(error);
   }
 
-  const activeProducts = ((products || []) as unknown as ProductRow[]).filter((p) => p.is_active !== false);
+  const activeProducts = ((products || []) as unknown as ProductRow[]).filter(
+    (p) => p.is_active !== false,
+  );
   const totalProducts = activeProducts.length;
-  const lowStockItems = activeProducts.filter((p) => (p.stock || 0) <= (p.min_stock_alert || 0)).length;
-  const totalStockAllUnits = activeProducts.reduce((sum: number, p) => sum + (p.stock || 0), 0);
-  const totalInventoryValue = activeProducts.reduce((sum: number, p) => sum + ((p.stock || 0) * (p.selling_price || 0)), 0);
+  const lowStockItems = activeProducts.filter(
+    (p) => (p.stock || 0) <= (p.min_stock_alert || 0),
+  ).length;
+  const totalStockAllUnits = activeProducts.reduce(
+    (sum: number, p) => sum + (p.stock || 0),
+    0,
+  );
+  const totalInventoryValue = activeProducts.reduce(
+    (sum: number, p) => sum + (p.stock || 0) * (p.selling_price || 0),
+    0,
+  );
 
   return {
     totalProducts,
@@ -126,11 +153,14 @@ interface ProductQueryResult {
 /**
  * Fetch the product stock overview table items
  */
-export const getProductStockOverview = async (): Promise<ProductStockOverviewItem[]> => {
+export const getProductStockOverview = async (): Promise<
+  ProductStockOverviewItem[]
+> => {
   // Query active products along with product_units and their related units
   const { data: products, error: prodErr } = await supabase
     .from("products")
-    .select(`
+    .select(
+      `
       id,
       name,
       sku,
@@ -147,7 +177,8 @@ export const getProductStockOverview = async (): Promise<ProductStockOverviewIte
           symbol
         )
       )
-    `)
+    `,
+    )
     .eq("is_active", true)
     .order("name", { ascending: true });
 
@@ -171,7 +202,9 @@ export const getProductStockOverview = async (): Promise<ProductStockOverviewIte
     unitNamesMap.set(u.id, u.name);
   });
 
-  const overviewItems: ProductStockOverviewItem[] = ((products || []) as unknown as ProductQueryResult[]).map((p) => {
+  const overviewItems: ProductStockOverviewItem[] = (
+    (products || []) as unknown as ProductQueryResult[]
+  ).map((p) => {
     const stock = p.stock || 0;
     const minAlert = p.min_stock_alert || 0;
     let status: "In Stock" | "Low Stock" | "Out of Stock" = "In Stock";
@@ -181,8 +214,10 @@ export const getProductStockOverview = async (): Promise<ProductStockOverviewIte
       status = "Low Stock";
     }
 
-    const baseUnitSymbol = (p.base_unit_id && unitSymbolsMap.get(p.base_unit_id)) || "pcs";
-    const baseUnitName = (p.base_unit_id && unitNamesMap.get(p.base_unit_id)) || "Piece";
+    const baseUnitSymbol =
+      (p.base_unit_id && unitSymbolsMap.get(p.base_unit_id)) || "pcs";
+    const baseUnitName =
+      (p.base_unit_id && unitNamesMap.get(p.base_unit_id)) || "Piece";
 
     // Find first product unit with conversion factor > 1 (e.g. Carton of 24, Bag of 50)
     const packUnit = p.product_units?.find((pu) => pu.conversion_factor > 1);
@@ -218,7 +253,9 @@ export const getProductStockOverview = async (): Promise<ProductStockOverviewIte
 /**
  * Create a new stock adjustment transaction and update product stock balance
  */
-export const createStockAdjustment = async (input: StockAdjustmentInput): Promise<InventoryTransaction> => {
+export const createStockAdjustment = async (
+  input: StockAdjustmentInput,
+): Promise<InventoryTransaction> => {
   // 1. Fetch product unit to find conversion factor
   const { data: productUnit, error: puErr } = await supabase
     .from("product_units")
@@ -251,11 +288,15 @@ export const createStockAdjustment = async (input: StockAdjustmentInput): Promis
   const newStock = currentStock + baseStockChange;
 
   if (newStock < 0) {
-    throw new Error(`Insufficient stock. Current stock is ${currentStock} base units.`);
+    throw new Error(
+      `Insufficient stock. Current stock is ${currentStock} base units.`,
+    );
   }
 
   // 4. Get authenticated user ID
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const createdBy = user ? user.id : null;
 
   // 5. Update the product stock in database
@@ -280,13 +321,13 @@ export const createStockAdjustment = async (input: StockAdjustmentInput): Promis
     created_by: createdBy,
   };
 
-  const {error } = await supabase
-  .from("inventory_transactions")
-  .insert(transactionPayload)
-  .select()
-  .single();
+  const { error } = await supabase
+    .from("inventory_transactions")
+    .insert(transactionPayload)
+    .select()
+    .single();
 
-if (error) throw error;
+  if (error) throw error;
 
   return {
     id: `adj-tx-${Math.random().toString(36).substr(2, 9)}`,
@@ -301,6 +342,3 @@ if (error) throw error;
     created_at: new Date().toISOString(),
   } as unknown as InventoryTransaction;
 };
-
-
-
