@@ -1,5 +1,5 @@
 import DataTable from "../../../../components/ui/DataTable/DataTable";
-import { useInventoryTransactions } from "../../hooks/useInventoryQueries";
+import { useInventoryTransactions } from "../../hooks/useInventory";
 import { inventoryTransactionColumns } from "../inventoryTransactionColumns";
 
 export default function InventoryTransactionsTable() {
