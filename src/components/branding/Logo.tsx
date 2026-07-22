@@ -18,14 +18,14 @@ const Logo = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
               : "text-slate-900 group-hover:text-blue-600"
           }`}
         >
-          FARAMA STORE
+          FARAMA POS
         </span>
         <span
           className={`text-[9px] font-extrabold tracking-wider uppercase mt-1 ${
             isDark ? "text-slate-500" : "text-slate-400"
           }`}
         >
-          ERP LITE
+          Smart Business Suite
         </span>
       </div>
     </div>
