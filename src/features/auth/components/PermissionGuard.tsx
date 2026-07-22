@@ -19,7 +19,7 @@ export const PermissionGuard = ({
     if (fallback !== undefined) {
       return <>{fallback}</>;
     }
-    
+
     return (
       <div className="flex flex-col items-center justify-center p-8 rounded-2xl border border-slate-100 bg-white shadow-xs max-w-md mx-auto text-center space-y-4 my-6">
         <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 shadow-sm">
@@ -30,10 +30,10 @@ export const PermissionGuard = ({
             Access Restricted
           </h3>
           <p className="text-xs font-semibold text-slate-400">
-            Your current security profile does not grant authorization for the 
+            Your current security profile does not grant authorization for the
             <code className="mx-1 font-mono text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
               {permission}
-            </code> 
+            </code>
             capability.
           </p>
         </div>
