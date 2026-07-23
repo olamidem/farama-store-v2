@@ -1,7 +1,8 @@
 import { useEffect, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "../store/authStore";
-import { useLockScreen } from "./useLockScreen";
+import useLockScreen from "../hooks/useLockScreen";
+
 
 interface ProtectedRouteProps {
   children: ReactNode;
