@@ -1,10 +1,7 @@
 import { AlertCircle, Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  loginSchema,
-  type LoginFormData,
-} from "../validations/loginSchema";
+import { loginSchema, type LoginFormData } from "../validation/loginSchema";
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import { useNavigate } from "@tanstack/react-router";
