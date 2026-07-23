@@ -1,27 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useAuthStore } from "../store/authStore";
 
 export const useLogout = () => {
-  const logoutStore = useAuthStore((state) => state.logout);
+  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      await logoutStore();
+    mutationFn: logout,
+    onSuccess: async () => {
+      // Remove cached data
+      queryClient.removeQueries();
+      toast.success("Logged out successfully.");
+      await navigate({
+        to: "/",
+      });
     },
-    onSuccess: () => {
-      queryClient.clear();
-      toast.success("Successfully logged out.");
-      navigate({ to: "/" });
-    },
-    onError: (error: unknown) => {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to log out.",
-      );
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Unable to logout.");
     },
   });
 };
+
 export default useLogout;
