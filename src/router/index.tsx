@@ -17,6 +17,7 @@ import PurchasesPage from "../features/purchases/pages/PurchasesPage";
 import SuppliersPage from "../features/suppliers/pages/SuppliersPage";
 import StaffPage from "../pages/Staff/StaffPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
+import LockScreenPage from "../features/auth/pages/LockScreenPage";
 
 
 
@@ -100,6 +101,12 @@ const profileRoute = createRoute({
   component: ProfilePage,
 });
 
+const lockScreenRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/lock-screen",
+  component: LockScreenPage,
+});
+
 // const salesRoute = createRoute({
 //   getParentRoute: () => appLayoutRoute,
 //   path: "/sales",
@@ -117,6 +124,7 @@ const profileRoute = createRoute({
  */
 const routeTree = rootRoute.addChildren([
   loginRoute,
+  lockScreenRoute,
   appLayoutRoute.addChildren([
     dashboardRoute,
     productsRoute,

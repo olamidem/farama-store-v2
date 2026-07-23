@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Lock, LogOut, Delete } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
-import { unlockWithPin } from "../services/auth.service";
 import { toast } from "sonner";
 import { motion } from "motion/react";
+import useAuthStore from "../store/authStore";
 
 export const LockScreen = () => {
   const user = useAuthStore((state) => state.user);

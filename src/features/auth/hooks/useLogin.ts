@@ -13,7 +13,6 @@ export const useLogin = () => {
     onSuccess: async () => {
       // Refresh the entire auth state
       await initialize();
-      toast.success("Welcome back!");
     },
     onError: (error) => {
       toast.error(getReadableError(error));

@@ -6,26 +6,34 @@ export const usePermissions = () => {
 
   const can = (code: string): boolean => {
     if (!profile) return false;
-    const roleName = profile.role?.name?.toLowerCase() || "";
-    // Super admins always bypass permission checks
-    if (roleName === "super admin" || roleName === "super_admin") {
+
+    // Super Admin / Administrator bypass
+    if ((profile.role?.level ?? 0) >= 90) {
       return true;
     }
-    return permissions.includes(code);
+
+    return permissions.some((permission) => permission.code === code);
   };
 
   const hasRole = (role: string): boolean => {
-    if (!profile || !profile.role) return false;
-    const roleName = profile.role.name || "";
-    return roleName.toLowerCase() === role.toLowerCase();
+    if (!profile?.role) return false;
+
+    return profile.role.name.toLowerCase() === role.toLowerCase();
+  };
+
+  const hasLevel = (level: number): boolean => {
+    return (profile?.role?.level ?? 0) >= level;
   };
 
   return {
+    profile,
+    role: profile?.role,
     permissions,
+
     can,
     hasRole,
-    role: profile?.role,
-    profile,
+    hasLevel,
   };
 };
+
 export default usePermissions;
