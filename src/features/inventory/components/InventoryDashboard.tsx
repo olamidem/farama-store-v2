@@ -273,6 +273,8 @@ export const InventoryDashboard = () => {
         isOpen={isAdjustModalOpen}
         onClose={() => setIsAdjustModalOpen(false)}
         productsList={productsList}
+        stockOverview={stockOverview}
+        settings={settings}
       />
 
       {/* Stock Transfer Modal */}
