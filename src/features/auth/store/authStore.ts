@@ -84,11 +84,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     try {
       const { data, error } = await supabase.auth.getSession();
-
       if (error) throw error;
-
       const session = data.session;
-
       if (!session) {
         set({
           session: null,
@@ -98,14 +95,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
           isAuthenticated: false,
           isLoading: false,
         });
-
         return;
       }
 
       const user = session.user;
-
       const profile = await getCurrentProfile(user.id);
-
       set({
         session,
         user,
@@ -115,7 +109,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
       });
     } catch (err) {
       console.error("Failed to initialize auth:", err);
-
       set({
         session: null,
         user: null,
