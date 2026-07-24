@@ -1,27 +1,22 @@
-import { createRouterConfig, useRouterState } from "@tanstack/react-router";
+import { useMatches } from "@tanstack/react-router";
 
-const HeaderTitle = () => {
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
+export default function DashboardLayout() {
+  const matches = useMatches();
+  
+  // Find the current match that has staticData
+  const currentMatch = matches[matches.length - 1];
+  const staticData = currentMatch?.staticData as { headerTitle?: string; title?: string; subtitle?: string } | undefined;
 
-  const page =
-    createRouterConfig[pathname] ?? {
-      title: "Farama ERP Lite",
-      subtitle: "",
-    };
+  const headerTitle = staticData?.headerTitle || staticData?.title || "App";
+  const subtitle = staticData?.subtitle;
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-slate-800">
-        {page.title}
-      </h1>
-
-      <p className="text-sm text-slate-500">
-        {page.subtitle}
-      </p>
+      <header>
+        <h1>{headerTitle}</h1>
+        {subtitle && <p>{subtitle}</p>}
+      </header>
+      {/* Outlet for nested routes */}
     </div>
   );
-};
-
-export default HeaderTitle;
+}
