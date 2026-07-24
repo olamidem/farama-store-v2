@@ -1,95 +1,74 @@
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import UserAvatar from "./UserAvatar";
-import UserMenu from "./UserMenu";
-import useAuthStore from "../../../store/authStore";
-import useLogout from "../../../features/auth/hooks/useLogout";
+import { useAuthStore } from "../../../store/authStore";
+import { UserAvatar } from "./UserAvatar";
+import { UserMenu } from "./UserMenu";
 
-
-const UserDropdown = () => {
-  const navigate = useNavigate();
+export const UserDropdown = () => {
+  const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const setLocked = useAuthStore((state) => state.setLocked);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
 
-  const logoutMutation = useLogout();
-  const [open, setOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setOpen(false);
+        setIsDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
+    return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  const handleProfile = () => {
-    setOpen(false);
-    navigate({
-      to: "/profile",
-    });
-  };
-
-  const handleLock = () => {
+  const handleLockScreen = () => {
+    setIsDropdownOpen(false);
     setLocked(true);
-    setOpen(false);
-    navigate({
-      to: "/lock-screen",
-    });
   };
 
-  const handleLogout = () => {
-    setOpen(false);
-    logoutMutation.mutate();
+  const handleLogout = async () => {
+    setIsDropdownOpen(false);
+    await logout();
+    navigate({ to: "/" });
   };
 
   return (
-    <div
-      ref={dropdownRef}
-      className="relative"
-    >
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-slate-100 transition cursor-pointer"
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
       >
-        <UserAvatar
-          profile={profile}
-          size="sm"
-        />
+        <UserAvatar profile={profile} user={user} />
 
-        <div className="hidden md:flex flex-col items-start">
-          <span className="text-sm font-semibold text-slate-700">
-            {profile?.full_name}
-          </span>
-          <span className="text-xs text-slate-500">
-            {profile?.role?.name}
-          </span>
+        <div className="text-left hidden sm:block">
+          <p className="font-extrabold text-slate-800 text-xs leading-none">
+            {profile?.full_name || "Farama Operator"}
+          </p>
+          <p className="text-[9px] font-bold text-slate-400 mt-0.5 leading-none uppercase tracking-wider">
+            {profile?.role?.name || "Administrator"}
+          </p>
         </div>
-
-        <ChevronDown
-          size={16}
-          className={`transition ${open ? "rotate-180" : ""}`}
-        />
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-3 z-50">
-          <UserMenu
-            onProfile={handleProfile}
-            onLock={handleLock}
-            onLogout={handleLogout}
-          />
-        </div>
+      {/* Dropdown Menu Portal */}
+      {isDropdownOpen && (
+        <UserMenu
+          profileName={profile?.full_name || undefined}
+          userEmail={user?.email || undefined}
+          onClose={() => setIsDropdownOpen(false)}
+          onLockScreen={handleLockScreen}
+          onLogout={handleLogout}
+        />
       )}
     </div>
   );
 };
-
-export default UserDropdown;

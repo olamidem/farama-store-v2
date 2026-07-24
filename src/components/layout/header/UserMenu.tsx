@@ -1,60 +1,80 @@
-import { User, Lock, Settings, LogOut } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { User, Key, Sliders, Lock, LogOut } from "lucide-react";
 
 interface UserMenuProps {
-  onProfile: () => void;
-  onLock: () => void;
-  onSettings?: () => void;
+  profileName?: string;
+  userEmail?: string;
+  onClose: () => void;
+  onLockScreen: () => void;
   onLogout: () => void;
 }
 
-const UserMenu = ({
-  onProfile,
-  onLock,
-  onSettings,
+export const UserMenu = ({
+  profileName,
+  userEmail,
+  onClose,
+  onLockScreen,
   onLogout,
 }: UserMenuProps) => {
   return (
-    <div className="w-64 rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
-      <button
-        onClick={onProfile}
-        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer"
-      >
-        <User size={18} />
-        <span>My Profile</span>
-      </button>
+    <div className="absolute right-0 mt-2.5 w-60 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl z-50 animate-in fade-in slide-in-from-top-3 duration-200">
+      {/* Dropdown Header */}
+      <div className="px-3.5 py-3 border-b border-slate-50 mb-1">
+        <p className="text-xs font-black text-slate-800 leading-none">
+          {profileName}
+        </p>
+        <p className="text-[10px] font-bold text-slate-400 mt-1 leading-none">
+          {userEmail}
+        </p>
+      </div>
 
-      <button
-        onClick={onLock}
-        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer"
-      >
-        <Lock size={18} />
-        <span>Lock Screen</span>
-      </button>
+      {/* Menu Links */}
+      <div className="space-y-0.5">
+        <Link
+          to="/profile"
+          onClick={onClose}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition"
+        >
+          <User size={14} className="text-slate-400" />
+          <span>My Profile</span>
+        </Link>
 
-      <button
-        onClick={onSettings}
-        disabled
-        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-slate-400 cursor-not-allowed"
-      >
-        <Settings size={18} />
-        <span>Settings</span>
+        <Link
+          to="/profile"
+          onClick={onClose}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition"
+        >
+          <Key size={14} className="text-slate-400" />
+          <span>Change PIN</span>
+        </Link>
 
-        <span className="ml-auto rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase">
-          Soon
-        </span>
-      </button>
+        <Link
+          to="/profile"
+          onClick={onClose}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition"
+        >
+          <Sliders size={14} className="text-slate-400" />
+          <span>Preferences</span>
+        </Link>
 
-      <div className="my-1 border-t border-slate-200" />
+        <button
+          onClick={onLockScreen}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition cursor-pointer text-left focus:outline-none"
+        >
+          <Lock size={14} className="text-amber-500" />
+          <span>Lock Screen</span>
+        </button>
 
-      <button
-        onClick={onLogout}
-        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition cursor-pointer"
-      >
-        <LogOut size={18} />
-        <span>Logout</span>
-      </button>
+        <div className="border-t border-slate-50 my-1 pt-1" />
+
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 transition cursor-pointer text-left focus:outline-none"
+        >
+          <LogOut size={14} className="text-rose-500" />
+          <span>Logout</span>
+        </button>
+      </div>
     </div>
   );
 };
-
-export default UserMenu;
