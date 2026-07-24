@@ -1,6 +1,8 @@
 import { Menu } from "lucide-react";
-import HeaderSearch from "./HeaderSearch";
 import UserDropdown from "./UserDropdown";
+import HeaderTitle from "./HeaderTitle";
+import HeaderNotifications from "./HeaderNotification";
+import HeaderSearch from "./HeaderSearch";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
